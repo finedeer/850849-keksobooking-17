@@ -1,35 +1,45 @@
 'use strict';
 // 1.массив объектов
 var types = ['palace', 'flat', 'house', 'bungalo'];
-
-var selectRandomValue = function (randomValue) {
-  return randomValue[Math.floor(Math.random() * randomValue.length)];
-};
+var photoNumbers = [1, 2, 3, 4, 5, 6, 7, 8];
 
 var getRandom = function (max, min) {
   return Math.floor(min + Math.random() * (max - min));
 };
 
+var shuffle = function (arr) {
+  var j;
+  var temp;
+  for (var i = arr.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    temp = arr[j];
+    arr[j] = arr[i];
+    arr[i] = temp;
+  }
+  return arr;
+};
+var uniquePhotoNumbers = shuffle(photoNumbers);
+
 var getMarks = function () {
-  var guideMarks = [];
+  var marks = [];
   for (var i = 0; i <= 7; i++) {
     var mark = {
-      'author': {
-        'avatar': 'img/avatars/user0' + getRandom(8, 1) + '.png'
+      author: {
+        avatar: 'img/avatars/user0' + uniquePhotoNumbers[i] + '.png'
       },
 
-      'offer': {
-        'type': selectRandomValue(types)
+      offer: {
+        type: types[getRandom(types.length)]
       },
 
-      'location': {
-        'x': getRandom(940, 40),
-        'y': getRandom(630, 130)
+      location: {
+        x: getRandom(940, 40),
+        y: getRandom(630, 130),
       }
     };
-    guideMarks.push(mark);
+    marks.push(mark);
   }
-  return guideMarks;
+  return marks;
 };
 
 var marks = getMarks();
@@ -42,20 +52,29 @@ mapFaded.classList.remove('map--faded');
 var mapPins = document.querySelector('.map-pins');
 var pinTemplate = document.querySelector('#pin')
     .content
-    .querySelector('.map-pin');
+    .querySelector('button');
 
 var renderPins = function (mark) {
   var pinElement = pinTemplate.cloneNode(true);
 
   pinElement.querySelector('img').src = mark.author.avatar;
   pinElement.querySelector('img').alt = mark.offer.type;
-  pinElement.querySelector('button').style = '\"left:' + mark.location.x + 'px; top:' + mark.location.y + 'px;\"';
+  pinElement.style.left = mark.location.x + 'px';
+  pinElement.style.top = mark.location.y + 'px';
   return pinElement;
 };
+// var fragment = document.createDocumentFragment();
+// for (var i = 0; i < marks.length; i++) {
+//  fragment.appendChild(renderPins(marks[i]));
+// }
+// mapPins.appendChild(fragment);
 
+function getPins() {
+  var fragment = document.createDocumentFragment();
 
-var fragment = document.createDocumentFragment();
-for (var i = 0; i < marks.length; i++) {
-  fragment.appendChild(renderPins(marks[i]));
+  for (var i = 0; i < marks.length; i++) {
+    fragment.appendChild(renderPins(marks[i]));
+  }
+  return mapPins.appendChild(fragment);
 }
-mapPins.appendChild(fragment);
+getPins();
