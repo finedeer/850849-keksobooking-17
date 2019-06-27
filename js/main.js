@@ -49,32 +49,23 @@ var mapFaded = document.querySelector('.map');
 mapFaded.classList.remove('map--faded');
 
 // 3. DOM
-var mapPins = document.querySelector('.map-pins');
-var pinTemplate = document.querySelector('#pin')
-    .content
-    .querySelector('button');
+  var mapPins = document.querySelector('.map__pins');
+var template = document.querySelector('#pin').content;
+var pinTemplate = template.querySelector('button');
 
 var renderPins = function (mark) {
   var pinElement = pinTemplate.cloneNode(true);
-
   pinElement.querySelector('img').src = mark.author.avatar;
   pinElement.querySelector('img').alt = mark.offer.type;
   pinElement.style.left = mark.location.x + 'px';
   pinElement.style.top = mark.location.y + 'px';
   return pinElement;
 };
-// var fragment = document.createDocumentFragment();
-// for (var i = 0; i < marks.length; i++) {
-//  fragment.appendChild(renderPins(marks[i]));
-// }
-// mapPins.appendChild(fragment);
-
-function getPins() {
+var getPins = function (pins) {
   var fragment = document.createDocumentFragment();
-
-  for (var i = 0; i < marks.length; i++) {
-    fragment.appendChild(renderPins(marks[i]));
+  for (var i = 0; i < pins.length; i++) {
+    fragment.appendChild(renderPins(pins[i]));
   }
   return mapPins.appendChild(fragment);
-}
-getPins();
+};
+getPins(marks);
