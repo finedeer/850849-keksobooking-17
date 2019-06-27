@@ -2,6 +2,8 @@
 // 1.массив объектов
 var types = ['palace', 'flat', 'house', 'bungalo'];
 var photoNumbers = [1, 2, 3, 4, 5, 6, 7, 8];
+var PINWIDTH = 40;
+var PINHEIGHT = 44;
 
 var getRandom = function (max, min) {
   return Math.floor(min + Math.random() * (max - min));
@@ -33,8 +35,8 @@ var getMarks = function () {
       },
 
       location: {
-        x: getRandom(940, 40),
-        y: getRandom(630, 130),
+        x: getRandom(900 - PINWIDTH, PINWIDTH),
+        y: getRandom(630, 130 + PINHEIGHT),
       }
     };
     marks.push(mark);
@@ -49,7 +51,7 @@ var mapFaded = document.querySelector('.map');
 mapFaded.classList.remove('map--faded');
 
 // 3. DOM
-  var mapPins = document.querySelector('.map__pins');
+var mapPins = document.querySelector('.map__pins');
 var template = document.querySelector('#pin').content;
 var pinTemplate = template.querySelector('button');
 
