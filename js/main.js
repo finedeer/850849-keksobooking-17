@@ -6,28 +6,44 @@ var PINWIDTH = 40;
 var PINHEIGHT = 44;
 
 var getRandom = function (max, min) {
+  if (!min) {
+    min = 0;
+  }
   return Math.floor(min + Math.random() * (max - min));
 };
-
 var shuffle = function (arr) {
-  var j;
-  var temp;
-  for (var i = arr.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    temp = arr[j];
+  var shuffledphotoNumbers = [];
+  for (var i = arr.length - 1; i >= 0; i--) {
+    var j = getRandom(i);
+    var temp = arr[j];
     arr[j] = arr[i];
     arr[i] = temp;
+    shuffledphotoNumbers.push(temp);
   }
-  return arr;
+  return shuffledphotoNumbers;
 };
-var uniquePhotoNumbers = shuffle(photoNumbers);
+// тут исходный массив не изменилсяно с перемешанным чтото нет то(
+// var shuffle = function (arr) {
+//  var shuffledphotoNumbers = [];
+//  for (var i = arr.length - 1; i >= 0; i--) {
+//    shuffledphotoNumbers[i] = arr[i]
+//    var j = getRandom(i);
+//    shuffledphotoNumbers[j] = arr[j]
+//    var temp = shuffledphotoNumbers[j];
+//     shuffledphotoNumbers[j] = shuffledphotoNumbers[i];
+//    shuffledphotoNumbers[i] = temp;
 
+//  }
+//  return shuffledphotoNumbers;
+// };
+
+var shuffledphotoNumbers = shuffle(photoNumbers);
 var getMarks = function () {
   var marks = [];
   for (var i = 0; i <= 7; i++) {
     var mark = {
       author: {
-        avatar: 'img/avatars/user0' + uniquePhotoNumbers[i] + '.png'
+        avatar: 'img/avatars/user0' + shuffledphotoNumbers[i] + '.png'
       },
 
       offer: {
@@ -57,17 +73,29 @@ var pinTemplate = template.querySelector('button');
 
 var renderPins = function (mark) {
   var pinElement = pinTemplate.cloneNode(true);
-  pinElement.querySelector('img').src = mark.author.avatar;
-  pinElement.querySelector('img').alt = mark.offer.type;
+  var picture = pinElement.querySelector('img');
+  picture.src = mark.author.avatar;
+  picture.alt = mark.offer.type;
   pinElement.style.left = mark.location.x + 'px';
   pinElement.style.top = mark.location.y + 'px';
   return pinElement;
 };
-var getPins = function (pins) {
+var appendPinsToDom = function (pins) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < pins.length; i++) {
     fragment.appendChild(renderPins(pins[i]));
   }
-  return mapPins.appendChild(fragment);
+  mapPins.appendChild(fragment);
 };
-getPins(marks);
+appendPinsToDom(marks);
+
+// обработчики событий
+// var mapPinMain = document.querySelector('.map__pin--main');
+// var adForm = document.querySelector('.ad-form');
+// var mapFilters = document.querySelector('.map__filters');
+// mapPinMain.addEventListener('click', function () {
+//  mapFaded.classList.remove('map--faded');
+//  getPins(marks);
+//  adForm.classList.remove('ad-form--disabled');
+//  mapFilters.classList.add('map__filters--disabled');
+// });
