@@ -6,44 +6,29 @@ var PINWIDTH = 40;
 var PINHEIGHT = 44;
 
 var getRandom = function (max, min) {
-  if (!min) {
+  if (min === undefined) {
     min = 0;
   }
   return Math.floor(min + Math.random() * (max - min));
 };
+
 var shuffle = function (arr) {
-  var shuffledphotoNumbers = [];
   for (var i = arr.length - 1; i >= 0; i--) {
     var j = getRandom(i);
     var temp = arr[j];
     arr[j] = arr[i];
     arr[i] = temp;
-    shuffledphotoNumbers.push(temp);
   }
-  return shuffledphotoNumbers;
+  return arr;
 };
-// тут исходный массив не изменилсяно с перемешанным чтото нет то(
-// var shuffle = function (arr) {
-//  var shuffledphotoNumbers = [];
-//  for (var i = arr.length - 1; i >= 0; i--) {
-//    shuffledphotoNumbers[i] = arr[i]
-//    var j = getRandom(i);
-//    shuffledphotoNumbers[j] = arr[j]
-//    var temp = shuffledphotoNumbers[j];
-//     shuffledphotoNumbers[j] = shuffledphotoNumbers[i];
-//    shuffledphotoNumbers[i] = temp;
+var shuffledPhotoNumbers = shuffle(photoNumbers.slice());
 
-//  }
-//  return shuffledphotoNumbers;
-// };
-
-var shuffledphotoNumbers = shuffle(photoNumbers);
 var getMarks = function () {
   var marks = [];
   for (var i = 0; i <= 7; i++) {
     var mark = {
       author: {
-        avatar: 'img/avatars/user0' + shuffledphotoNumbers[i] + '.png'
+        avatar: 'img/avatars/user0' + shuffledPhotoNumbers[i] + '.png'
       },
 
       offer: {
@@ -67,7 +52,7 @@ var mapFaded = document.querySelector('.map');
 mapFaded.classList.remove('map--faded');
 
 // 3. DOM
-var mapPins = document.querySelector('.map__pins');
+var mapPinsNode = document.querySelector('.map__pins');
 var template = document.querySelector('#pin').content;
 var pinTemplate = template.querySelector('button');
 
@@ -85,17 +70,6 @@ var appendPinsToDom = function (pins) {
   for (var i = 0; i < pins.length; i++) {
     fragment.appendChild(renderPins(pins[i]));
   }
-  mapPins.appendChild(fragment);
+  mapPinsNode.appendChild(fragment);
 };
 appendPinsToDom(marks);
-
-// обработчики событий
-// var mapPinMain = document.querySelector('.map__pin--main');
-// var adForm = document.querySelector('.ad-form');
-// var mapFilters = document.querySelector('.map__filters');
-// mapPinMain.addEventListener('click', function () {
-//  mapFaded.classList.remove('map--faded');
-//  getPins(marks);
-//  adForm.classList.remove('ad-form--disabled');
-//  mapFilters.classList.add('map__filters--disabled');
-// });
