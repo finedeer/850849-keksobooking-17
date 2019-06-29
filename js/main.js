@@ -49,7 +49,7 @@ var marks = getMarks();
 
 // 2.Убираем у .map класс .map--faded.
 var mapFaded = document.querySelector('.map');
-mapFaded.classList.remove('map--faded');
+
 
 // 3. DOM
 var mapPinsNode = document.querySelector('.map__pins');
@@ -72,4 +72,15 @@ var appendPinsToDom = function (pins) {
   }
   mapPinsNode.appendChild(fragment);
 };
-appendPinsToDom(marks);
+
+
+// обработчики событий
+var mapPinMain = document.querySelector('.map__pin--main');
+var adForm = document.querySelector('.ad-form');
+var mapFilters = document.querySelector('.map__filters');
+mapPinMain.addEventListener('click', function () {
+  mapFaded.classList.remove('map--faded');
+  appendPinsToDom(marks);
+  adForm.classList.remove('ad-form--disabled');
+  mapFilters.classList.add('map__filters--disabled');
+});
