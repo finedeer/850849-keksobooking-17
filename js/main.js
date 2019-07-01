@@ -78,7 +78,6 @@ var appendPinsToDom = function (pins) {
 
 var mapPinMain = document.querySelector('.map__pin--main');
 mapPinMain.addEventListener('click', function () {
-  mapFaded.classList.remove('map--faded');
   appendPinsToDom(marks);
 });
 
@@ -99,12 +98,14 @@ mapPinMain.addEventListener('click', function () {
 
 var adFormAdress = document.querySelector('#address');
 
-var getCoordinates = function (coordinate) {
+var getCoordinates = function (coordinate, faded) {
   var rect = coordinate.getBoundingClientRect();
-  return (rect.left + PINWIDTH / 2) + ', ' + (rect.top + PINHEIGHT);
+  if (!faded) {
+    return (Math.round(rect.left) + PINWIDTH / 2) + ', ' + (Math.round(rect.top) + PINHEIGHT);
+  }
+  return (Math.round(rect.left) + PINWIDTH / 2) + ', ' + (Math.round(rect.top) + PINHEIGHT / 2);
 };
-var coordinate = getCoordinates(mapPinMain);
-adFormAdress.value = coordinate;
+adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
 mapPinMain.addEventListener('click', function () {
-  adFormAdress.value = coordinate;
+  adFormAdress.value = getCoordinates(mapPinMain);
 });
