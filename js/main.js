@@ -48,7 +48,7 @@ var getMarks = function () {
 var marks = getMarks();
 
 // 2.Убираем у .map класс .map--faded.
-var mapFaded = document.querySelector('.map');
+
 
 
 // 3. DOM
@@ -75,12 +75,36 @@ var appendPinsToDom = function (pins) {
 
 
 // обработчики событий
+
 var mapPinMain = document.querySelector('.map__pin--main');
-var adForm = document.querySelector('.ad-form');
-var mapFilters = document.querySelector('.map__filters');
 mapPinMain.addEventListener('click', function () {
   mapFaded.classList.remove('map--faded');
   appendPinsToDom(marks);
+});
+
+var mapFaded = document.querySelector('.map');
+mapPinMain.addEventListener('click', function () {
+  mapFaded.classList.remove('map--faded');
+});
+
+var adForm = document.querySelector('.ad-form');
+mapPinMain.addEventListener('click', function () {
   adForm.classList.remove('ad-form--disabled');
-  mapFilters.classList.add('map__filters--disabled');
+});
+
+var mapFilters = document.querySelector('.map__filters');
+mapPinMain.addEventListener('click', function () {
+  mapFilters.classList.remove('map__filters--disabled');
+});
+
+var adFormAdress = document.querySelector('#address');
+
+var getCoordinates = function (coordinate) {
+  var rect = coordinate.getBoundingClientRect();
+  return (rect.left + PINWIDTH / 2) + ', ' + (rect.top + PINHEIGHT);
+};
+var coordinate = getCoordinates(mapPinMain);
+adFormAdress.value = coordinate;
+mapPinMain.addEventListener('click', function () {
+  adFormAdress.value = coordinate;
 });
