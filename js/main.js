@@ -74,8 +74,35 @@ var appendPinsToDom = function (pins) {
 };
 
 
-// обработчики событий
+// обработчики событий (module4-task1)
+var mapPinMain = document.querySelector('.map__pin--main');
+var mapFaded = document.querySelector('.map');
+var adForm = document.querySelector('.ad-form');
+var mapFilters = document.querySelector('.map__filters');
+var adFormAdress = document.querySelector('#address');
 
+var getCoordinates = function (coordinate, faded) {
+  var rect = coordinate.getBoundingClientRect();
+  var x = mapFaded.getBoundingClientRect();
+  var xCoordinate = Math.round(rect.left - x.left) + (PINWIDTH / 2);
+  var yCoordinate = Math.round(rect.top - x.top) + (PINHEIGHT / 2);
+  if (!faded) {
+    yCoordinate = Math.round(rect.top - x.top) + PINHEIGHT;
+  }
+  return xCoordinate + ', ' + yCoordinate;
+};
+
+adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
+
+mapPinMain.addEventListener('click', function () {
+  appendPinsToDom(marks);
+  mapFaded.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  mapFilters.classList.remove('map__filters--disabled');
+  adFormAdress.value = getCoordinates(mapPinMain);
+});
+
+/*
 var mapPinMain = document.querySelector('.map__pin--main');
 mapPinMain.addEventListener('click', function () {
   appendPinsToDom(marks);
@@ -109,3 +136,6 @@ adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
 mapPinMain.addEventListener('click', function () {
   adFormAdress.value = getCoordinates(mapPinMain);
 });
+*/
+
+// доверяй, но проверяй (module4-task2)
