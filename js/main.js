@@ -50,7 +50,6 @@ var marks = getMarks();
 // 2.Убираем у .map класс .map--faded.
 
 
-
 // 3. DOM
 var mapPinsNode = document.querySelector('.map__pins');
 var template = document.querySelector('#pin').content;
@@ -139,3 +138,48 @@ mapPinMain.addEventListener('click', function () {
 */
 
 // доверяй, но проверяй (module4-task2)
+var adFormTitle = adForm.querySelector('#title');
+
+adFormTitle.addEventListener('invalid', function () {
+  if (adFormTitle.validity.tooShort) {
+    adFormTitle.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
+  } else if (adFormTitle.validity.tooLong) {
+    adFormTitle.setCustomValidity('Заголовок объявления не должен превышать 100 символов');
+  } else if (adFormTitle.validity.valueMissing) {
+    adFormTitle.setCustomValidity('Обязательное поле');
+  } else {
+    adFormTitle.setCustomValidity('');
+  }
+});
+
+var adFormPrice = adForm.querySelector('#price');
+
+adFormPrice.addEventListener('invalid', function () {
+  if (adFormPrice.validity.rangeOverflow) {
+    adFormPrice.setCustomValidity('Максимальное значение — 1 000 000');
+  } else if (adFormPrice.validity.valueMissing) {
+    adFormPrice.setCustomValidity('Обязательное поле');
+  } else {
+    adFormPrice.setCustomValidity('');
+  }
+});
+var prices = ['0', '1000', '5000', '10 000'];
+var adFormType = adForm.querySelectorAll('#type');
+
+var getPriceForType = function (type, price) {
+  var prieValue = price[i];
+  type.addEventListener('click', function () {
+    adFormPrice.placeholder = prieValue;
+  });
+};
+for (var i = 0; i < adFormType.length; i++) {
+  getPriceForType(adFormType[i], prices[i]);
+}
+
+var adFormTimein = adForm.querySelector('#timein');
+var adFormTimeout = adForm.querySelector('#timeout');
+
+
+var syncValues = function (element, value) {
+  element.value = value;
+};
