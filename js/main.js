@@ -48,8 +48,7 @@ var getMarks = function () {
 var marks = getMarks();
 
 // 2.Убираем у .map класс .map--faded.
-var mapFaded = document.querySelector('.map');
-mapFaded.classList.remove('map--faded');
+
 
 // 3. DOM
 var mapPinsNode = document.querySelector('.map__pins');
@@ -72,4 +71,32 @@ var appendPinsToDom = function (pins) {
   }
   mapPinsNode.appendChild(fragment);
 };
-appendPinsToDom(marks);
+
+
+// обработчики событий (module4-task1)
+var mapPinMain = document.querySelector('.map__pin--main');
+var mapFaded = document.querySelector('.map');
+var adForm = document.querySelector('.ad-form');
+var mapFilters = document.querySelector('.map__filters');
+var adFormAdress = document.querySelector('#address');
+
+var getCoordinates = function (coordinate, faded) {
+  var rect = coordinate.getBoundingClientRect();
+  var x = mapFaded.getBoundingClientRect();
+  var xCoordinate = Math.round(rect.left - x.left) + (PINWIDTH / 2);
+  var yCoordinate = Math.round(rect.top - x.top) + (PINHEIGHT / 2);
+  if (!faded) {
+    yCoordinate = Math.round(rect.top - x.top) + PINHEIGHT;
+  }
+  return xCoordinate + ', ' + yCoordinate;
+};
+
+adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
+
+mapPinMain.addEventListener('click', function () {
+  appendPinsToDom(marks);
+  mapFaded.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  mapFilters.classList.remove('map__filters--disabled');
+  adFormAdress.value = getCoordinates(mapPinMain);
+});
