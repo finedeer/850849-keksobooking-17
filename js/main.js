@@ -136,6 +136,7 @@ var prices = {
 };
 var adFormType = adForm.querySelector('#type');
 
+adFormPrice.placeholder = prices[adFormType.options[adFormType.selectedIndex].value];
 var synchronizeTypeAndPrice = function (eventForm, formToCange, mapObject) {
   eventForm.addEventListener('change', function (e) {
     formToCange.placeholder = mapObject[e.target.value];
