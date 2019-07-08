@@ -93,33 +93,11 @@ var getCoordinates = function (coordinate, faded) {
 
 adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
 
-/*mapPinMain.addEventListener('click', function () {
-  appendPinsToDom(marks);
-  mapFaded.classList.remove('map--faded');
-  adForm.classList.remove('ad-form--disabled');
-  mapFilters.classList.remove('map__filters--disabled');
-  adFormAdress.value = getCoordinates(mapPinMain);
-});
-*/
 // доверяй, но проверяй (module4-task2)
 var adFormTitle = adForm.querySelector('#title');
 
 adFormTitle.addEventListener('invalid', function () {
-  switch (adFormTitle.validity) {
-    case adFormTitle.validity.tooShort:
-      adFormTitle.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
-      break;
-    case adFormTitle.validity.tooLong:
-      adFormTitle.setCustomValidity('Заголовок объявления не должен превышать 100 символов');
-      break;
-    case adFormTitle.validity.valueMissing:
-      adFormTitle.setCustomValidity('Обязательное поле');
-      break;
-    default:
-      adFormTitle.setCustomValidity('');
-  }
-
-/*  if (adFormTitle.validity.tooShort) {
+  if (adFormTitle.validity.tooShort) {
     adFormTitle.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
   } else if (adFormTitle.validity.tooLong) {
     adFormTitle.setCustomValidity('Заголовок объявления не должен превышать 100 символов');
@@ -128,7 +106,6 @@ adFormTitle.addEventListener('invalid', function () {
   } else {
     adFormTitle.setCustomValidity('');
   }
-  */
 });
 
 var adFormPrice = adForm.querySelector('#price');
@@ -173,20 +150,80 @@ synchronizeTwoForms(adFormTimein, adFormTimeout);
 synchronizeTwoForms(adFormTimeout, adFormTimein);
 
 // максимум подвижности (module5-task1)
-
-mapPinMain.addEventListener('mousedown', function (evt) {
-  evt.preventDefault();
-
+function activatePoints() {
   appendPinsToDom(marks);
   mapFaded.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   mapFilters.classList.remove('map__filters--disabled');
+  activated = true;
+}
+var activated = false;
+
+var areaNode = document.querySelector('.map__overlay');
+var areaRect = areaNode.getBoundingClientRect();
+var boundSize = {
+  width: areaRect.width,
+  height: areaRect.height,
+};
+
+var pinRect = mapPinMain.getBoundingClientRect();
+var pinSize = {
+  width: pinRect.left + (PINWIDTH / 2),
+  height: pinRect.top + PINHEIGHT,
+};
+var pinCords = {
+  x: pinSize.width,
+  y: pinSize.height
+};
+
+function validateBound(coords, bound) {
+  var newCoords = {
+    x: coords.x,
+    y: coords.y
+  };
+  if (newCoords.x >= bound.width - PINWIDTH) {
+    newCoords.x = bound.width - PINWIDTH;
+  }
+
+  if (newCoords.x < 0) {
+    newCoords.x = 0;
+  }
+
+  if (newCoords.y >= bound.height) {
+    newCoords.y = bound.height - PINHEIGHT;
+  }
+
+  if (newCoords.y < 0) {
+    newCoords.y = 130;
+  }
+
+  return newCoords;
+}
+
+function movePoint(newCoords) {
+  mapPinMain.style.top = newCoords.y + 'px';
+  mapPinMain.style.left = newCoords.x + 'px';
+  setAdress(newCoords);
+}
+
+function setAdress(coords) {
+  adFormAdress.value = coords.x + ', ' + coords.y;
+}
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  if (!activated) {
+    activatePoints();
+  }
+
   adFormAdress.value = getCoordinates(mapPinMain);
 
   var startCoords = {
     x: evt.clientX,
     y: evt.clientY
   };
+
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
 
@@ -200,15 +237,23 @@ mapPinMain.addEventListener('mousedown', function (evt) {
       y: moveEvt.clientY
     };
 
-    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+    var newCoords = {
+      x: pinCords.x - shift.x,
+      y: pinCords.y - shift.y,
+    };
+
+    pinCords = validateBound(newCoords, boundSize);
+
+    movePoint(pinCords);
+    setAdress(newCoords);
   };
+
   var onMouseUp = function (upEvt) {
     upEvt.preventDefault();
 
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
-    adFormAdress.value = getCoordinates(mapPinMain);
+
   };
 
 
