@@ -93,19 +93,33 @@ var getCoordinates = function (coordinate, faded) {
 
 adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
 
-mapPinMain.addEventListener('click', function () {
+/*mapPinMain.addEventListener('click', function () {
   appendPinsToDom(marks);
   mapFaded.classList.remove('map--faded');
   adForm.classList.remove('ad-form--disabled');
   mapFilters.classList.remove('map__filters--disabled');
   adFormAdress.value = getCoordinates(mapPinMain);
 });
-
+*/
 // доверяй, но проверяй (module4-task2)
 var adFormTitle = adForm.querySelector('#title');
 
 adFormTitle.addEventListener('invalid', function () {
-  if (adFormTitle.validity.tooShort) {
+  switch (adFormTitle.validity) {
+    case adFormTitle.validity.tooShort:
+      adFormTitle.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
+      break;
+    case adFormTitle.validity.tooLong:
+      adFormTitle.setCustomValidity('Заголовок объявления не должен превышать 100 символов');
+      break;
+    case adFormTitle.validity.valueMissing:
+      adFormTitle.setCustomValidity('Обязательное поле');
+      break;
+    default:
+      adFormTitle.setCustomValidity('');
+  }
+
+/*  if (adFormTitle.validity.tooShort) {
     adFormTitle.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
   } else if (adFormTitle.validity.tooLong) {
     adFormTitle.setCustomValidity('Заголовок объявления не должен превышать 100 символов');
@@ -114,6 +128,7 @@ adFormTitle.addEventListener('invalid', function () {
   } else {
     adFormTitle.setCustomValidity('');
   }
+  */
 });
 
 var adFormPrice = adForm.querySelector('#price');
@@ -156,3 +171,47 @@ var synchronizeTwoForms = function (firstForm, secondForm) {
 };
 synchronizeTwoForms(adFormTimein, adFormTimeout);
 synchronizeTwoForms(adFormTimeout, adFormTimein);
+
+// максимум подвижности (module5-task1)
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+
+  appendPinsToDom(marks);
+  mapFaded.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  mapFilters.classList.remove('map__filters--disabled');
+  adFormAdress.value = getCoordinates(mapPinMain);
+
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var onMouseMove = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+  };
+  var onMouseUp = function (upEvt) {
+    upEvt.preventDefault();
+
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    adFormAdress.value = getCoordinates(mapPinMain);
+  };
+
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+});
