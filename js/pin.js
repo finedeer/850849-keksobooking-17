@@ -21,7 +21,7 @@
   // максимум подвижности (module5-task1)
 
   function activatePoints() {
-    window.createPin.appendPinsToDom(window.data.marks);
+    window.load(window.createPin.appendPinsToDom, window.createPin.errorHandler);
     mapFaded.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     mapFilters.classList.remove('map__filters--disabled');

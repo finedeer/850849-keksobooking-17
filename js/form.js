@@ -58,4 +58,10 @@
   };
   synchronizeTwoForms(adFormTimein, adFormTimeout);
   synchronizeTwoForms(adFormTimeout, adFormTimein);
+
+
+  adForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(adForm));
+    evt.preventDefault();
+  });
 })();
