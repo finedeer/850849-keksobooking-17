@@ -1,5 +1,19 @@
 // Файл data.js
 'use strict';
+(function () {
+  var ads = [];
+  // Кэширование даннных с сервера в массив announcements
+  var setAds = function (data) {
+    ads = data;
+    window.createPin.appendPinsToDom(ads.slice(0, 5));
+  };
+
+  window.render = {
+    setAds: setAds
+  };
+
+})();
+
 /* (function () {
   var types = ['palace', 'flat', 'house', 'bungalo'];
   var photoNumbers = [1, 2, 3, 4, 5, 6, 7, 8];
