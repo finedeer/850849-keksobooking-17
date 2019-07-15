@@ -1,11 +1,23 @@
 // Файл data.js
 'use strict';
 (function () {
+  var mapFilters = document.querySelector('.map__filters');
+  var housingType = mapFilters.querySelector('#housing-type');
   var ads = [];
   // Кэширование даннных с сервера в массив announcements
   var setAds = function (data) {
     ads = data;
+
     window.createPin.appendPinsToDom(ads.slice(0, 5));
+  };
+
+  var showHousingType = function () {
+    housingType.addEventListener('change', function (e) {
+      var targetValue = e.target.value;
+      var housingTypes = ads.filter(function (ad) {
+        return ad.offer.type === targetValue;
+      });
+    });
   };
 
   window.render = {
