@@ -18,10 +18,11 @@
   };
 
   adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
-  // максимум подвижности (module5-task1)
 
   function activatePoints() {
-    window.load(window.render.setAds, window.createPin.errorHandler);
+    window.data.getPins(function () {
+      window.createPin.appendPinsToDom(window.data.getFilteredPins());
+    });
     mapFaded.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     mapFilters.classList.remove('map__filters--disabled');
@@ -51,19 +52,19 @@
       x: coords.x,
       y: coords.y
     };
-    if (newCoords.x >= bound.width - window.constants.PINWIDTH) {
-      newCoords.x = bound.width - window.constants.PINWIDTH;
+    if (newCoords.x > bound.width - window.constants.PINWIDTH) {
+      newCoords.x = bound.width;
     }
 
-    if (newCoords.x < 0) {
-      newCoords.x = 0;
+    if (newCoords.x < window.constants.PINWIDTH / 2) {
+      newCoords.x = window.constants.PINWIDTH / 2;
     }
 
-    if (newCoords.y >= bound.height) {
-      newCoords.y = bound.height - window.constants.PINHEIGHT;
+    if (newCoords.y > 630) {
+      newCoords.y = 630;
     }
 
-    if (newCoords.y < 0) {
+    if (newCoords.y < 130) {
       newCoords.y = 130;
     }
 
@@ -71,8 +72,8 @@
   }
 
   function movePoint(newCoords) {
-    mapPinMain.style.top = newCoords.y + 'px';
-    mapPinMain.style.left = newCoords.x + 'px';
+    mapPinMain.style.top = newCoords.y - window.constants.PINHEIGHT + 'px';
+    mapPinMain.style.left = newCoords.x - window.constants.PINWIDTH + 'px';
     setAdress(newCoords);
   }
 

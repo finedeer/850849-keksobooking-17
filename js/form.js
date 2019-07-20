@@ -2,8 +2,6 @@
 (function () {
   var adForm = document.querySelector('.ad-form');
 
-
-  // доверяй, но проверяй (module4-task2)
   var adFormTitle = adForm.querySelector('#title');
 
   adFormTitle.addEventListener('invalid', function () {
@@ -49,6 +47,8 @@
 
   var adFormTimein = adForm.querySelector('#timein');
   var adFormTimeout = adForm.querySelector('#timeout');
+  var adFormRoomNumber = adForm.querySelector('#room_number');
+  var adFormCapacity = adForm.querySelector('#capacity');
 
   var synchronizeTwoForms = function (firstForm, secondForm) {
     firstForm.addEventListener('change', function (e) {
@@ -58,6 +58,7 @@
   };
   synchronizeTwoForms(adFormTimein, adFormTimeout);
   synchronizeTwoForms(adFormTimeout, adFormTimein);
+  synchronizeTwoForms(adFormRoomNumber, adFormCapacity);
 
 
   adForm.addEventListener('submit', function (evt) {

@@ -3,7 +3,7 @@
   var mapPinsNode = document.querySelector('.map__pins');
   var template = document.querySelector('#pin').content;
   var pinTemplate = template.querySelector('button');
-  var errorTemplate = template.querySelector('#error');
+  var errorTemplate = document.querySelector('#error');
 
   var renderPins = function (mark) {
     var pinElement = pinTemplate.cloneNode(true);
