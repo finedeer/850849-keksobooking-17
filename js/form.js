@@ -58,8 +58,19 @@
   };
   synchronizeTwoForms(adFormTimein, adFormTimeout);
   synchronizeTwoForms(adFormTimeout, adFormTimein);
-  synchronizeTwoForms(adFormRoomNumber, adFormCapacity);
 
+  // вопрос по synchronizeRoomNumAndCapacity ?
+  var synchronizeRoomNumAndCapacity = function (firstForm, secondForm) {
+    firstForm.addEventListener('change', function (e) {
+      var targetValue = e.target.value;
+      if (targetValue === '100') {
+        secondForm.value = '0';
+      } else {
+        secondForm.value = targetValue;
+      }
+    });
+  };
+  synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
 
   adForm.addEventListener('submit', function (evt) {
     window.upload(new FormData(adForm));

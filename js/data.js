@@ -1,7 +1,7 @@
 // Файл data.js
 'use strict';
 (function () {
-  var mapFilters = document.querySelector('.map__filters');
+  /* var mapFilters = document.querySelector('.map__filters');
   var housingType = mapFilters.querySelector('#housing-type');
   var housingPrice = mapFilters.querySelector('#housing-price');
   var housingRooms = mapFilters.querySelector('#housing-rooms');
@@ -12,7 +12,20 @@
   var housingParking = mapFilters.querySelector('#filter-parking');
   var housingWasher = mapFilters.querySelector('#filter-washer');
   var housingElevator = mapFilters.querySelector('#filter-elevator');
-  var housingConditioner = mapFilters.querySelector('filter-conditioner');
+  var housingConditioner = mapFilters.querySelector('filter-conditioner');*/
+  var filtersMap = {
+    '#housing-type': 'type',
+    '#housing-price': 'price',
+    '#housing-rooms': 'rooms',
+    '#housing-guests': 'guests',
+    '#filter-wifi': 'wifi',
+    '#filter-dishwasher': 'dishwasher',
+    '#filter-parking': 'parking',
+    '#filter-washer': 'washer',
+    '#filter-elevator': 'elevator',
+    'filter-conditioner': 'conditioner',
+    '#housing-features': 'features'
+  };
   var synchronizePriceInDiapason = function (diapason, value) {
     switch (diapason) {
       case 'any':
@@ -27,21 +40,10 @@
         return false;
     }
   };
-  function getConditions() {
-    var conditions = {
-      type: housingType.value,
-      price: housingPrice.value,
-      rooms: housingRooms.value,
-      guests: housingGuests.value
-    };
-    return conditions
-  }
-
-
 
   var pins = [];
   function getPins(onGetPins) {
-    window.load(function (localPins) {
+    window.load.getData(function (localPins) {
       pins = localPins;
       onGetPins(pins);
     },
@@ -55,9 +57,9 @@
 
     var newPins = pins.slice(0);
 
-    if (conditions.type) {
+    if (conditions.value) {
       newPins = newPins.filter(function (pin) {
-        return pin.type === conditions.type;
+        return pin.value === conditions.value;
       });
     }
 
@@ -78,7 +80,7 @@
       });
     }
 
-    return pins.slice(0, 5);
+    return newPins.slice(0, 5);
   }
 
   window.data = {

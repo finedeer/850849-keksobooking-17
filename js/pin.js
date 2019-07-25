@@ -22,6 +22,7 @@
   function activatePoints() {
     window.data.getPins(function () {
       window.createPin.appendPinsToDom(window.data.getFilteredPins());
+      window.card.closePopup(window.card.appendCardToDom(window.data.getFilteredPins()[0]));
     });
     mapFaded.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
@@ -52,7 +53,7 @@
       x: coords.x,
       y: coords.y
     };
-    if (newCoords.x > bound.width - window.constants.PINWIDTH) {
+    if (newCoords.x > bound.width) {
       newCoords.x = bound.width;
     }
 
@@ -83,6 +84,7 @@
 
   mapPinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
+
 
     if (!activated) {
       activatePoints();

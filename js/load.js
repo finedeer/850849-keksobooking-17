@@ -2,7 +2,7 @@
 
 (function () {
 
-  window.load = function (onSuccess, onError) {
+  var getData = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
@@ -21,7 +21,7 @@
 
     xhr.timeout = 10000; // 10s
 
-    xhr.open('GET', window.constants.URL);
+    xhr.open('GET', window.constants.URL + '/data');
 
     xhr.addEventListener('load', function () {
       onSuccess(xhr.response);
@@ -29,4 +29,8 @@
 
     xhr.send();
   };
+  window.load = {
+    getData: getData
+  };
+
 })();
