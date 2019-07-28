@@ -72,8 +72,60 @@
   };
   synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
 
+  // adForm.addEventListener('submit', function (evt) {
+  //  window.upload(new FormData(adForm));
+  //  evt.preventDefault();
+  // });
+
+  // Обработка события submit и сброс
+
+  var errorTemplate = document.querySelector('#error');
+  var successTemplate = document.querySelector('#success');
+  var mapPinsNode = document.querySelector('.map__pins');
+  var adFormSubmitButton = ('.ad-form__submit');
+  var mapFaded = document.querySelector('.map');
+  var mapFilters = document.querySelector('.map__filters');
+  var main = document.querySelector('main');
+
+  var renderMessage = function () {
+    var messageNode = successTemplate.cloneNode(true);
+    return messageNode;
+  };
+  var appendMessageToDom = function () {
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(renderMessage());
+    main.appendChild(fragment);
+  };
+
+  function delitePins() {
+    var mapPins = mapPinsNode.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var j = 0; j < mapPins.length; j++) {
+      mapPinsNode.removeChild(mapPins[j]);
+    }
+  }
+
+
   adForm.addEventListener('submit', function (evt) {
-    window.upload(new FormData(adForm));
+    var formFields = adForm.elements;
+    for (var i = 0; i < adForm.length; i++) {
+      formFields[i].style.boxShadow = '';
+      if (!formFields[i].validity.valid) {
+        formFields[i].style.boxShadow = window.constants.ERROR_RED_SHADOW;
+        return;
+      }
+    }
+    window.loadUpload.postData(new FormData(adForm), function () {
+      adForm.reset();
+      mapFaded.classList.add('map--faded');
+      adForm.classList.add('ad-form--disabled');
+      mapFilters.classList.add('map__filters--disabled');
+      window.card.removeCard();
+      delitePins();
+      window.pin.setAdress(window.pin.pinCords);
+      appendMessageToDom(renderMessage());
+      synchronizeTypeAndPrice(adFormType, adFormPrice, prices);
+      synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
+    });
     evt.preventDefault();
   });
 })();

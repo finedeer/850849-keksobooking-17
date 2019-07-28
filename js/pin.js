@@ -22,7 +22,7 @@
   function activatePoints() {
     window.data.getPins(function () {
       window.createPin.appendPinsToDom(window.data.getFilteredPins());
-      window.card.closePopup(window.card.appendCardToDom(window.data.getFilteredPins()[0]));
+      window.card.appendCardToDom(window.data.getFilteredPins()[0]);
     });
     mapFaded.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
@@ -133,4 +133,9 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+  window.pin = {
+    activatePoints: activatePoints,
+    setAdress: setAdress,
+    pinCords: pinCords
+  };
 })();

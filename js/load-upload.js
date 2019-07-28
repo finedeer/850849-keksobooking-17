@@ -2,7 +2,7 @@
 
 (function () {
 
-  var getData = function (onSuccess, onError) {
+  var setup = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.addEventListener('load', function () {
@@ -21,15 +21,22 @@
 
     xhr.timeout = 10000; // 10s
 
+    return xhr;
+  };
+
+  var postData = function (data, onSuccess, onError) {
+    var xhr = setup(onSuccess, onError);
+    xhr.open('POST', window.constants.URL);
+    xhr.send(data);
+  };
+  var getData = function (onSuccess, onError) {
+    var xhr = setup(onSuccess, onError);
     xhr.open('GET', window.constants.URL + '/data');
-
-    xhr.addEventListener('load', function () {
-      onSuccess(xhr.response);
-    });
-
     xhr.send();
   };
-  window.load = {
+
+  window.loadUpload = {
+    postData: postData,
     getData: getData
   };
 

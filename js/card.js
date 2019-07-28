@@ -3,7 +3,6 @@
   var mapPinsNode = document.querySelector('.map__pins');
   var template = document.querySelector('#card').content;
   // var cardTemplate = template.querySelector('.map__card');
-  var popupClose = template.querySelector('.popup__close');
 
   var housingTypes = {
     'flat': 'Квартира',
@@ -22,6 +21,7 @@
     cardElement.querySelector('.popup__text--capacity').textContent = card.offer.rooms + ' комнаты для' + card.offer.guests + ' гостей.';
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', ' + 'выезд до ' + card.offer.checkout;
     cardElement.querySelector('.popup__description').textContent = card.offer.description;
+    cardElement.querySelector('.popup__avatar').src = card.author.avatar;
     var popupPhptosNodes = cardElement.querySelector('.popup__photos');
     var popupPhptos = card.offer.photos;
     popupPhptosNodes.removeChild(popupPhptosNodes.querySelector('img'));
@@ -40,15 +40,28 @@
 
   var appendCardToDom = function (card) {
     var fragment = document.createDocumentFragment();
+    removeCard();
     fragment.appendChild(renderCard(card));
     mapPinsNode.appendChild(fragment);
+    var mapCardCloseNode = document.querySelector('.map__pins .popup__close');
+    listenClosePopup(mapCardCloseNode);
   };
+  function removeCard() {
+    var mapCardNode = document.querySelector('.map__pins .map__card');
+    if (mapCardNode) {
+      mapCardNode.parentElement.removeChild(mapCardNode);
+    }
+  }
 
-  // сoкрытие карточки тут тоже вопрос?
-  var closePopup = function (element) {
-    popupClose.addEventListener('click', function () {
-      element.classList.add('visually-hidden');
-      popupClose.removeEventListener('keydown');
+
+  var listenClosePopup = function (buttonClose) {
+    buttonClose.addEventListener('click', function () {
+      removeCard();
+    });
+    buttonClose.addEventListener('keydown', function (e) {
+      if (window.utilities.isEscPressed(e)) {
+        removeCard();
+      }
     });
   };
 
@@ -56,6 +69,6 @@
   window.card = {
     renderCard: renderCard,
     appendCardToDom: appendCardToDom,
-    closePopup: closePopup
+    removeCard: removeCard
   };
 })();

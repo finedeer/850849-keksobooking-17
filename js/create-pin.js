@@ -4,7 +4,6 @@
   var template = document.querySelector('#pin').content;
   var pinTemplate = template.querySelector('button');
   var errorTemplate = document.querySelector('#error');
-  var mapPinMain = document.querySelector('.map__pin--main');
 
   var renderPins = function (mark) {
     var pinElement = pinTemplate.cloneNode(true);
@@ -13,6 +12,14 @@
     picture.alt = mark.offer.type;
     pinElement.style.left = mark.location.x + 'px';
     pinElement.style.top = mark.location.y + 'px';
+    pinElement.addEventListener('click', function () {
+      window.card.appendCardToDom(mark);
+    });
+    pinElement.addEventListener('keydown', function (e) {
+      if (window.utilities.isEscPressed(e)) {
+        window.card.appendCardToDom(mark);
+      }
+    });
     return pinElement;
   };
   var appendPinsToDom = function (pins) {
@@ -20,11 +27,9 @@
     for (var i = 0; i < pins.length; i++) {
       fragment.appendChild(renderPins(pins[i]));
     }
-    var mapChildren = mapPinsNode.children;
-    for (var j = 0; j < mapChildren.length; j++) {
-      if (!mapPinMain) {
-        mapPinsNode.removeChild(mapChildren[j]);
-      }
+    var mapPins = mapPinsNode.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var j = 0; j < mapPins.length; j++) {
+      mapPinsNode.removeChild(mapPins[j]);
     }
     mapPinsNode.appendChild(fragment);
   };

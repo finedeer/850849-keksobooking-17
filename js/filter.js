@@ -20,7 +20,9 @@
   function getConditions() {
     var conditions = {};
     filtersNodes.forEach(function (filterNode) {
-      if (filterNode.value) {
+      if (filterNode.type === 'checkbox') {
+        conditions[filterNode.id] = filterNode.checked;
+      } else {
         conditions[filterNode.id] = filterNode.value;
       }
     });
@@ -32,7 +34,6 @@
   }
 
   window.filter = {
-    getConditions: getConditions,
-    onFilterUpdate: onFilterUpdate
+    getConditions: getConditions
   };
 })();
