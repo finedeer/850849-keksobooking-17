@@ -26,14 +26,6 @@
       return false;
     }
   };
-  var checkCheckedValue = function (targetElement, dataItem) {
-   if (targetElement.checked) {
-     if (dataItem.offer.features.indexOf(targetElement.value) === -1) {
-       return false;
-     }
-   }
-   return true;
- };
 
   var pins = [];
   function getPins(onGetPins) {
@@ -65,49 +57,24 @@
       if (conditions['housing-price'] !== 'any' && synchronizePriceInDiapason(pin.offer.price) !== conditions['housing-price']) {
         return false;
       }
-      for (var key in conditions) {
-          if (conditions[key] === 'any') {
-            continue;
-          }
-
-      if (typeof pin.offer[filtersMap[key]] === 'boolean' && conditions[key]) {
-        checkCheckedValue(conditions[key], pin.offer[filtersMap[key]])
+      if (conditions['filter-wifi'] && pin.offer.features.indexOf(filtersMap['filter-wifi']) === -1) {
+        return false;
       }
-}
-      /* for (var key in conditions) {
-          if (conditions[key] === 'any') {
-            continue;
-          }
-        }
-      var conditionsValue = conditions[key];
-        var offerValue = pin.offer[filtersMap[key]];
-
-        if (key === 'housing-price') {
-          if (synchronizePriceInDiapason(conditionsValue, offerValue)) {
-            continue;
-          } else {
-            return false;
-          }
-        }
-
-        if (typeof offerValue === 'number') {
-          conditionsValue = +conditionsValue;
-        }
-
-        if (typeof offerValue === 'boolean' && conditionsValue) {
-          if (pin.offer.features.indexOf(filtersMap[key]) === -1) {
-            return false;
-          } else {
-            continue;
-          }
-        }
-
-        if (pin.offer.rooms !== conditionsValue) {
-          return false;
-        } else {
-          continue;
-        }*/
-      // }
+      if (conditions['filter-dishwasher'] && pin.offer.features.indexOf(filtersMap['filter-dishwasher']) === -1) {
+        return false;
+      }
+      if (conditions['filter-parking'] && pin.offer.features.indexOf(filtersMap['filter-parking']) === -1) {
+        return false;
+      }
+      if (conditions['filter-washer'] && pin.offer.features.indexOf(filtersMap['filter-washer']) === -1) {
+        return false;
+      }
+      if (conditions['filter-elevator'] && pin.offer.features.indexOf(filtersMap['filter-elevator']) === -1) {
+        return false;
+      }
+      if (conditions['filter-conditioner'] && pin.offer.features.indexOf(filtersMap['filter-conditioner']) === -1) {
+        return false;
+      }
       return true;
     });
 

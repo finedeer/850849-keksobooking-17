@@ -65,6 +65,10 @@
       var targetValue = e.target.value;
       if (targetValue === '100') {
         secondForm.value = '0';
+      } else if (targetValue === '2') {
+        secondForm.value = '2' || '1';
+      } else if (targetValue === '3') {
+        secondForm.value = '2' || '1' || '3';
       } else {
         secondForm.value = targetValue;
       }
@@ -77,7 +81,7 @@
   //  evt.preventDefault();
   // });
 
-  // Обработка события submit и сброс
+  // Обработка события submit и сброс(тут прям вообще один сплошной вопрос)
 
   var errorTemplate = document.querySelector('#error');
   var successTemplate = document.querySelector('#success');
