@@ -82,10 +82,13 @@
   var errorTemplate = document.querySelector('#error');
   var successTemplate = document.querySelector('#success');
   var mapPinsNode = document.querySelector('.map__pins');
-  var adFormSubmitButton = ('.ad-form__submit');
+  var adFormSubmitButton = document.querySelector('.ad-form__submit');
   var mapFaded = document.querySelector('.map');
   var mapFilters = document.querySelector('.map__filters');
   var main = document.querySelector('main');
+  var map = document.querySelector('.map');
+  var adFormReset = document.querySelector('.ad-form__reset');
+
 
   var renderMessage = function () {
     var messageNode = successTemplate.cloneNode(true);

@@ -1,18 +1,7 @@
 // Файл data.js
 'use strict';
 (function () {
-  /* var mapFilters = document.querySelector('.map__filters');
-  var housingType = mapFilters.querySelector('#housing-type');
-  var housingPrice = mapFilters.querySelector('#housing-price');
-  var housingRooms = mapFilters.querySelector('#housing-rooms');
-  var housingGuests = mapFilters.querySelector('#housing-guests');
-  var housingFeatures = mapFilters.querySelector('#housing-features');
-  var housingWifi = mapFilters.querySelector('#filter-wifi');
-  var housingDishwasher = mapFilters.querySelector('#filter-dishwasher');
-  var housingParking = mapFilters.querySelector('#filter-parking');
-  var housingWasher = mapFilters.querySelector('#filter-washer');
-  var housingElevator = mapFilters.querySelector('#filter-elevator');
-  var housingConditioner = mapFilters.querySelector('filter-conditioner');*/
+
   var filtersMap = {
     'housing-type': 'type',
     'housing-price': 'price',
@@ -25,20 +14,26 @@
     'filter-elevator': 'elevator',
     'filter-conditioner': 'conditioner'
   };
-  var synchronizePriceInDiapason = function (diapason, value) {
-    switch (diapason) {
-      case 'any':
-        return true;
-      case 'middle':
-        return value <= 50000 && value >= 10000;
-      case 'low':
-        return value < 10000;
-      case 'high':
-        return value > 50000;
-      default:
-        return false;
+
+  var synchronizePriceInDiapason = function (value) {
+    if (value > 50000) {
+      return 'high';
+    } else if (value < 10000) {
+      return 'low';
+    } else if (value <= 50000 && value >= 10000) {
+      return 'middle';
+    } else {
+      return false;
     }
   };
+  var checkCheckedValue = function (targetElement, dataItem) {
+   if (targetElement.checked) {
+     if (dataItem.offer.features.indexOf(targetElement.value) === -1) {
+       return false;
+     }
+   }
+   return true;
+ };
 
   var pins = [];
   function getPins(onGetPins) {
@@ -57,11 +52,7 @@
     var newPins = pins.slice(0);
 
     newPins = newPins.filter(function (pin) {
-    /*  for (var key in conditions) {
-        if (conditions[key] === 'any') {
-          continue;
-        }
-      }*/
+
       if (conditions['housing-rooms'] !== 'any' && pin.offer.rooms !== +conditions['housing-rooms']) {
         return false;
       }
@@ -71,23 +62,24 @@
       if (conditions['housing-type'] !== 'any' && pin.offer.type !== conditions['housing-type']) {
         return false;
       }
-      if (conditions['housing-price'] !== 'any' && synchronizePriceInDiapason(pin.offer.price, conditions['housing-price']) !== conditions['housing-price']) {
-        console.log(synchronizePriceInDiapason(conditions['housing-price'], pin.offer.price))
+      if (conditions['housing-price'] !== 'any' && synchronizePriceInDiapason(pin.offer.price) !== conditions['housing-price']) {
         return false;
       }
       for (var key in conditions) {
-        if (conditions[key] !== 'any') {
-          continue;
-        }
-        if (typeof pin.offer[filtersMap[key]] === 'boolean' && conditions[key]) {
-          if (pin.offer.features.indexOf(filtersMap[key]) === -1) {
-            return false;
-          } else {
+          if (conditions[key] === 'any') {
+            continue;
+          }
+
+      if (typeof pin.offer[filtersMap[key]] === 'boolean' && conditions[key]) {
+        checkCheckedValue(conditions[key], pin.offer[filtersMap[key]])
+      }
+}
+      /* for (var key in conditions) {
+          if (conditions[key] === 'any') {
             continue;
           }
         }
-      }
-      /* var conditionsValue = conditions[key];
+      var conditionsValue = conditions[key];
         var offerValue = pin.offer[filtersMap[key]];
 
         if (key === 'housing-price') {
