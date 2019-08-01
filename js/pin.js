@@ -6,19 +6,6 @@
   var mapFilters = document.querySelector('.map__filters');
   var adFormAdress = document.querySelector('#address');
 
-  var getCoordinates = function (coordinate, faded) {
-    var rect = coordinate.getBoundingClientRect();
-    var x = mapFaded.getBoundingClientRect();
-    var xCoordinate = Math.round(rect.left - x.left) + (window.constants.PINWIDTH / 2);
-    var yCoordinate = Math.round(rect.top - x.top) + (window.constants.PINHEIGHT / 2);
-    if (!faded) {
-      yCoordinate = Math.round(rect.top - x.top) + window.constants.PINHEIGHT;
-    }
-    return xCoordinate + ', ' + yCoordinate;
-  };
-
-  adFormAdress.value = getCoordinates(mapPinMain, mapFaded);
-
   function activatePoints() {
     window.data.getPins(function () {
       window.createPin.appendPinsToDom(window.data.getFilteredPins());
@@ -35,18 +22,27 @@
   var areaRect = areaNode.getBoundingClientRect();
   var boundSize = {
     width: areaRect.width,
-    height: areaRect.height,
+    height: areaRect.height
   };
 
   var pinRect = mapPinMain.getBoundingClientRect();
   var pinSize = {
-    width: pinRect.left + (window.constants.PINWIDTH / 2),
-    height: pinRect.top + window.constants.PINHEIGHT,
+    width: pinRect.width,
+    height: pinRect.height + 19
   };
   var pinCords = {
-    x: pinSize.width,
-    y: pinSize.height
+    x: boundSize.width / 2,
+    y: boundSize.height / 2
   };
+
+  function resetPin() {
+    activated = false;
+    pinCords = {
+      x: boundSize.width / 2,
+      y: boundSize.height / 2
+    };
+    setAdress(pinCords);
+  }
 
   function validateBound(coords, bound) {
     var newCoords = {
@@ -57,12 +53,12 @@
       newCoords.x = bound.width;
     }
 
-    if (newCoords.x < window.constants.PINWIDTH / 2) {
-      newCoords.x = window.constants.PINWIDTH / 2;
+    if (newCoords.x < pinSize.width / 2) {
+      newCoords.x = pinSize.width / 2;
     }
 
-    if (newCoords.y > 630) {
-      newCoords.y = 630;
+    if (newCoords.y > bound.height - 20) {
+      newCoords.y = bound.height - 20;
     }
 
     if (newCoords.y < 130) {
@@ -73,14 +69,16 @@
   }
 
   function movePoint(newCoords) {
-    mapPinMain.style.top = newCoords.y - window.constants.PINHEIGHT + 'px';
-    mapPinMain.style.left = newCoords.x - window.constants.PINWIDTH + 'px';
+    mapPinMain.style.top = newCoords.y - pinSize.height + 'px';
+    mapPinMain.style.left = newCoords.x - pinSize.width / 2 + 'px';
     setAdress(newCoords);
   }
 
   function setAdress(coords) {
     adFormAdress.value = coords.x + ', ' + coords.y;
   }
+
+  setAdress(pinCords);
 
   mapPinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
@@ -90,12 +88,13 @@
       activatePoints();
     }
 
-    adFormAdress.value = getCoordinates(mapPinMain);
 
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
+
+    setAdress(validateBound(pinCords, boundSize));
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
@@ -126,16 +125,16 @@
 
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
-
     };
-
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+
   window.pin = {
     activatePoints: activatePoints,
     setAdress: setAdress,
-    pinCords: pinCords
+    pinCords: pinCords,
+    resetPin: resetPin
   };
 })();

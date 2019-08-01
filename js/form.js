@@ -59,7 +59,7 @@
   synchronizeTwoForms(adFormTimein, adFormTimeout);
   synchronizeTwoForms(adFormTimeout, adFormTimein);
 
-  // вопрос по synchronizeRoomNumAndCapacity ?
+  // ВОПРОС?!
   var synchronizeRoomNumAndCapacity = function (firstForm, secondForm) {
     firstForm.addEventListener('change', function (e) {
       var targetValue = e.target.value;
@@ -68,7 +68,7 @@
       } else if (targetValue === '2') {
         secondForm.value = '2' || '1';
       } else if (targetValue === '3') {
-        secondForm.value = '2' || '1' || '3';
+        secondForm.value = '3' || '2' || '1';
       } else {
         secondForm.value = targetValue;
       }
@@ -76,41 +76,58 @@
   };
   synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
 
-  // adForm.addEventListener('submit', function (evt) {
-  //  window.upload(new FormData(adForm));
-  //  evt.preventDefault();
-  // });
+  adFormCapacity.addEventListener('invalid', function () {
+    if (!adFormCapacity.validity.valid) {
+      adFormCapacity.setCustomValidity('Некорректное значение');
+    } else {
+      adFormCapacity.setCustomValidity('');
+    }
+  });
 
   // Обработка события submit и сброс(тут прям вообще один сплошной вопрос)
-
-  var errorTemplate = document.querySelector('#error');
-  var successTemplate = document.querySelector('#success');
-  var mapPinsNode = document.querySelector('.map__pins');
-  var adFormSubmitButton = document.querySelector('.ad-form__submit');
+  var errorTemplate = document.querySelector('#error').content;
+  var successTemplate = document.querySelector('#success').content;
   var mapFaded = document.querySelector('.map');
   var mapFilters = document.querySelector('.map__filters');
   var main = document.querySelector('main');
-  var map = document.querySelector('.map');
-  var adFormReset = document.querySelector('.ad-form__reset');
+  var successMessage = document.querySelector('.success');
 
 
-  var renderMessage = function () {
+  var renderSuccessMessage = function () {
     var messageNode = successTemplate.cloneNode(true);
     return messageNode;
   };
-  var appendMessageToDom = function () {
+
+  // вопрос вопрос
+  var rendErerrorMessage = function (errorMessage) {
+    var messageNode = errorTemplate.cloneNode(true);
+    messageNode.textContent = errorMessage;
+    return messageNode;
+  };
+
+  var appendMessageToDom = function (renderMessage) {
     var fragment = document.createDocumentFragment();
-    fragment.appendChild(renderMessage());
+    fragment.appendChild(renderMessage);
     main.appendChild(fragment);
   };
 
-  function delitePins() {
-    var mapPins = mapPinsNode.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var j = 0; j < mapPins.length; j++) {
-      mapPinsNode.removeChild(mapPins[j]);
+  function removeMessage(message) {
+    if (message) {
+      message.parentElement.removeChild(message);
     }
   }
 
+  var listenCloseSuccessMessage = function () {
+    main.addEventListener('click', function () {
+      removeMessage(successMessage);
+    });
+    main.addEventListener('keydown', function (e) {
+      if (window.utilities.isEscPressed(e)) {
+        removeMessage(successMessage);
+        window.pin.activatePoints();
+      }
+    });
+  };
 
   adForm.addEventListener('submit', function (evt) {
     var formFields = adForm.elements;
@@ -121,18 +138,19 @@
         return;
       }
     }
-    window.loadUpload.postData(new FormData(adForm), function () {
+    window.backend.postData(new FormData(adForm), function () {
       adForm.reset();
       mapFaded.classList.add('map--faded');
       adForm.classList.add('ad-form--disabled');
       mapFilters.classList.add('map__filters--disabled');
       window.card.removeCard();
-      delitePins();
-      window.pin.setAdress(window.pin.pinCords);
-      appendMessageToDom(renderMessage());
-      synchronizeTypeAndPrice(adFormType, adFormPrice, prices);
-      synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
+      window.createPin.deletePins();
+      window.pin.resetPin();
+      appendMessageToDom(renderSuccessMessage());
+      successMessage = document.querySelector('.success');
+      listenCloseSuccessMessage(successMessage);
     });
     evt.preventDefault();
   });
+
 })();

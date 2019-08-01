@@ -29,7 +29,7 @@
 
   var pins = [];
   function getPins(onGetPins) {
-    window.loadUpload.getData(function (localPins) {
+    window.backend.getData(function (localPins) {
       pins = localPins;
       onGetPins(pins);
     },
@@ -78,6 +78,7 @@
       return true;
     });
 
+    window.card.removeCard();
     return newPins.slice(0, 5);
 
   }

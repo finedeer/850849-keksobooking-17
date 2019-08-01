@@ -35,7 +35,7 @@
     xhr.send();
   };
 
-  window.loadUpload = {
+  window.backend = {
     postData: postData,
     getData: getData
   };

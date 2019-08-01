@@ -3,7 +3,6 @@
   var mapPinsNode = document.querySelector('.map__pins');
   var template = document.querySelector('#pin').content;
   var pinTemplate = template.querySelector('button');
-  var errorTemplate = document.querySelector('#error');
 
   var renderPins = function (mark) {
     var pinElement = pinTemplate.cloneNode(true);
@@ -33,14 +32,16 @@
     }
     mapPinsNode.appendChild(fragment);
   };
-  var errorHandler = function (errorMessage) {
-    var node = errorTemplate.cloneNode(true);
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+  var deletePins = function () {
+    var mapPins = mapPinsNode.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var j = 0; j < mapPins.length; j++) {
+      mapPinsNode.removeChild(mapPins[j]);
+    }
   };
+
   window.createPin = {
     renderPins: renderPins,
     appendPinsToDom: appendPinsToDom,
-    errorHandler: errorHandler
+    deletePins: deletePins
   };
 })();

@@ -22,6 +22,17 @@
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + card.offer.checkin + ', ' + 'выезд до ' + card.offer.checkout;
     cardElement.querySelector('.popup__description').textContent = card.offer.description;
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
+    // вопрос
+    var popupFeaturesNodes = cardElement.querySelector('.popup__features');
+    var templateFeatures = popupFeaturesNodes.querySelector('.popup__feature');
+    popupFeaturesNodes.removeChild(templateFeatures);
+    var popupFeatures = card.offer.features;
+    for (var j = 0; j < popupFeatures.length; j++) {
+      var newFeature = document.createElement('li');
+      newFeature.class = 'popup__feature popup__feature--' + popupFeatures[j];
+      // popupFeaturesNodes.replaceChild(newFeature, templateFeatures);
+      popupFeaturesNodes.appendChild(newFeature);
+    }
     var popupPhptosNodes = cardElement.querySelector('.popup__photos');
     var popupPhptos = card.offer.photos;
     popupPhptosNodes.removeChild(popupPhptosNodes.querySelector('img'));
