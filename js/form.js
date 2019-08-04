@@ -1,8 +1,25 @@
 'use strict';
 (function () {
   var adForm = document.querySelector('.ad-form');
-
   var adFormTitle = adForm.querySelector('#title');
+  var adFormPrice = adForm.querySelector('#price');
+  var adFormType = adForm.querySelector('#type');
+  var prices = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10 000'
+  };
+  var adFormTimein = adForm.querySelector('#timein');
+  var adFormTimeout = adForm.querySelector('#timeout');
+  var adFormRoomNumber = adForm.querySelector('#room_number');
+  var adFormCapacity = adForm.querySelector('#capacity');
+  var roomMapByCapacity = {
+    '100': ['0'],
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3']
+  };
 
   adFormTitle.addEventListener('invalid', function () {
     if (adFormTitle.validity.tooShort) {
@@ -16,8 +33,6 @@
     }
   });
 
-  var adFormPrice = adForm.querySelector('#price');
-
   adFormPrice.addEventListener('invalid', function () {
     if (adFormPrice.validity.rangeOverflow) {
       adFormPrice.setCustomValidity('Максимальное значение — 1 000 000');
@@ -28,14 +43,6 @@
     }
   });
 
-  var prices = {
-    'bungalo': '0',
-    'flat': '1000',
-    'house': '5000',
-    'palace': '10 000'
-  };
-  var adFormType = adForm.querySelector('#type');
-
   adFormPrice.placeholder = prices[adFormType.options[adFormType.selectedIndex].value];
   var synchronizeTypeAndPrice = function (eventForm, formToCange, mapObject) {
     eventForm.addEventListener('change', function (e) {
@@ -44,11 +51,6 @@
     });
   };
   synchronizeTypeAndPrice(adFormType, adFormPrice, prices);
-
-  var adFormTimein = adForm.querySelector('#timein');
-  var adFormTimeout = adForm.querySelector('#timeout');
-  var adFormRoomNumber = adForm.querySelector('#room_number');
-  var adFormCapacity = adForm.querySelector('#capacity');
 
   var synchronizeTwoForms = function (firstForm, secondForm) {
     firstForm.addEventListener('change', function (e) {
@@ -59,32 +61,28 @@
   synchronizeTwoForms(adFormTimein, adFormTimeout);
   synchronizeTwoForms(adFormTimeout, adFormTimein);
 
-  // ВОПРОС?!
-  var synchronizeRoomNumAndCapacity = function (firstForm, secondForm) {
-    firstForm.addEventListener('change', function (e) {
-      var targetValue = e.target.value;
-      if (targetValue === '100') {
-        secondForm.value = '0';
-      } else if (targetValue === '2') {
-        secondForm.value = '2' || '1';
-      } else if (targetValue === '3') {
-        secondForm.value = '3' || '2' || '1';
-      } else {
-        secondForm.value = targetValue;
+  var synchronizeRoomNumAndCapacity = function (firstSelect, secondSelect) {
+    firstSelect.addEventListener('change', function (e) {
+      var optionsRooms = secondSelect.children;
+      console.log(optionsRooms)
+      for (var i = 0; i < optionsRooms.length; i++) {
+        optionsRooms[i].disable = true;
       }
+      var capacity = e.target.value;
+      var rooms = roomMapByCapacity[capacity];
+      rooms.forEach(function () {
+        for (var j = 0; j < optionsRooms.length; j++) {
+          if (optionsRooms[i].disable === rooms) {
+            optionsRooms[i].disable = false;
+          }
+        }
+      });
     });
   };
   synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
 
-  adFormCapacity.addEventListener('invalid', function () {
-    if (!adFormCapacity.validity.valid) {
-      adFormCapacity.setCustomValidity('Некорректное значение');
-    } else {
-      adFormCapacity.setCustomValidity('');
-    }
-  });
 
-  // Обработка события submit и сброс(тут прям вообще один сплошной вопрос)
+  // Обработка события submit и сброс
   var errorTemplate = document.querySelector('#error').content;
   var successTemplate = document.querySelector('#success').content;
   var mapFaded = document.querySelector('.map');
@@ -95,13 +93,6 @@
 
   var renderSuccessMessage = function () {
     var messageNode = successTemplate.cloneNode(true);
-    return messageNode;
-  };
-
-  // вопрос вопрос
-  var rendErerrorMessage = function (errorMessage) {
-    var messageNode = errorTemplate.cloneNode(true);
-    messageNode.textContent = errorMessage;
     return messageNode;
   };
 
@@ -129,6 +120,17 @@
     });
   };
 
+  /* var rendErerrorMessage = function (errorMessage) {
+    var messageNode = errorTemplate.cloneNode(true);
+    messageNode.textContent = errorMessage;
+    return messageNode;
+  };*/
+  var onError = function (errorMessage) {
+    var node = errorTemplate.cloneNode(true);
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement(main, node);
+  };
+
   adForm.addEventListener('submit', function (evt) {
     var formFields = adForm.elements;
     for (var i = 0; i < adForm.length; i++) {
@@ -146,9 +148,11 @@
       window.card.removeCard();
       window.createPin.deletePins();
       window.pin.resetPin();
+      adFormPrice.placeholder = '1000';
       appendMessageToDom(renderSuccessMessage());
       successMessage = document.querySelector('.success');
       listenCloseSuccessMessage(successMessage);
+      window.backend.getData(onError); // что-то совсем не то
     });
     evt.preventDefault();
   });

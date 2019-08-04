@@ -2,7 +2,6 @@
 (function () {
   var mapPinsNode = document.querySelector('.map__pins');
   var template = document.querySelector('#card').content;
-  // var cardTemplate = template.querySelector('.map__card');
 
   var housingTypes = {
     'flat': 'Квартира',
@@ -24,18 +23,17 @@
     cardElement.querySelector('.popup__avatar').src = card.author.avatar;
     // вопрос
     var popupFeaturesNodes = cardElement.querySelector('.popup__features');
-    var templateFeatures = popupFeaturesNodes.querySelector('.popup__feature');
-    popupFeaturesNodes.removeChild(templateFeatures);
+    popupFeaturesNodes.innerHTML = '';
     var popupFeatures = card.offer.features;
     for (var j = 0; j < popupFeatures.length; j++) {
       var newFeature = document.createElement('li');
       newFeature.class = 'popup__feature popup__feature--' + popupFeatures[j];
-      // popupFeaturesNodes.replaceChild(newFeature, templateFeatures);
       popupFeaturesNodes.appendChild(newFeature);
+      console.log(newFeature); // пустые лишки без класса
     }
     var popupPhptosNodes = cardElement.querySelector('.popup__photos');
     var popupPhptos = card.offer.photos;
-    popupPhptosNodes.removeChild(popupPhptosNodes.querySelector('img'));
+    popupPhptosNodes.innerHTML = '';
     for (var i = 0; i < popupPhptos.length; i++) {
       var newImg = document.createElement('img');
       newImg.src = popupPhptos[i];
