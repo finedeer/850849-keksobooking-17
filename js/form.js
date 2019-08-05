@@ -1,10 +1,27 @@
 'use strict';
 (function () {
   var adForm = document.querySelector('.ad-form');
-
-
-  // доверяй, но проверяй (module4-task2)
   var adFormTitle = adForm.querySelector('#title');
+  var adFormPrice = adForm.querySelector('#price');
+  var adFormType = adForm.querySelector('#type');
+  var prices = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10 000'
+  };
+  var adFormTimein = adForm.querySelector('#timein');
+  var adFormTimeout = adForm.querySelector('#timeout');
+  var adFormRoomNumber = adForm.querySelector('#room_number');
+  var adFormCapacity = adForm.querySelector('#capacity');
+  var roomMapByCapacity = {
+    '100': ['0'],
+    '1': ['1'],
+    '2': ['1', '2'],
+    '3': ['1', '2', '3']
+  };
+  var mapFaded = document.querySelector('.map');
+  var mapFilters = document.querySelector('.map__filters');
 
   adFormTitle.addEventListener('invalid', function () {
     if (adFormTitle.validity.tooShort) {
@@ -18,8 +35,6 @@
     }
   });
 
-  var adFormPrice = adForm.querySelector('#price');
-
   adFormPrice.addEventListener('invalid', function () {
     if (adFormPrice.validity.rangeOverflow) {
       adFormPrice.setCustomValidity('Максимальное значение — 1 000 000');
@@ -30,14 +45,6 @@
     }
   });
 
-  var prices = {
-    'bungalo': '0',
-    'flat': '1000',
-    'house': '5000',
-    'palace': '10 000'
-  };
-  var adFormType = adForm.querySelector('#type');
-
   adFormPrice.placeholder = prices[adFormType.options[adFormType.selectedIndex].value];
   var synchronizeTypeAndPrice = function (eventForm, formToCange, mapObject) {
     eventForm.addEventListener('change', function (e) {
@@ -46,9 +53,6 @@
     });
   };
   synchronizeTypeAndPrice(adFormType, adFormPrice, prices);
-
-  var adFormTimein = adForm.querySelector('#timein');
-  var adFormTimeout = adForm.querySelector('#timeout');
 
   var synchronizeTwoForms = function (firstForm, secondForm) {
     firstForm.addEventListener('change', function (e) {
@@ -59,9 +63,64 @@
   synchronizeTwoForms(adFormTimein, adFormTimeout);
   synchronizeTwoForms(adFormTimeout, adFormTimein);
 
+  var synchronizeRoomNumAndCapacity = function (firstSelect, secondSelect) {
+    firstSelect.addEventListener('change', function (e) {
+      var optionsRooms = secondSelect.children;
+      for (var i = 0; i < optionsRooms.length; i++) {
+        optionsRooms[i].disabled = true;
+      }
+      var capacity = e.target.value;
+      var rooms = roomMapByCapacity[capacity];
+      rooms.forEach(function (room) {
+        for (var j = 0; j < optionsRooms.length; j++) {
+          if (optionsRooms[j].value === room) {
+            optionsRooms[j].disabled = false;
+          }
+        }
+      });
+      if (rooms.indexOf(secondSelect.value) === -1) {
+        secondSelect.value = rooms[0];
+      }
+    });
+  };
+  synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
+
+  var disableForm = function () {
+    mapFaded.classList.add('map--faded');
+    adForm.classList.add('ad-form--disabled');
+    mapFilters.classList.add('map__filters--disabled');
+  };
+  var unableForm = function () {
+    mapFaded.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+    mapFilters.classList.remove('map__filters--disabled');
+  };
+
+  function resetAll() {
+    adForm.reset();
+    disableForm();
+    window.card.removeCard();
+    window.createPin.deletePins();
+    window.pin.resetPin();
+    adFormPrice.placeholder = '1000';
+    window.utilities.appendMessageToDom(window.utilities.renderSuccessMessage());
+    synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
+  }
 
   adForm.addEventListener('submit', function (evt) {
-    window.upload(new FormData(adForm));
     evt.preventDefault();
+    var formFields = adForm.elements;
+    for (var i = 0; i < adForm.length; i++) {
+      formFields[i].style.boxShadow = '';
+      if (!formFields[i].validity.valid) {
+        formFields[i].style.boxShadow = window.constants.ERROR_RED_SHADOW;
+        return;
+      }
+    }
+    window.backend.postData(new FormData(adForm), resetAll, window.utilities.onError);
   });
+
+  window.form = {
+    unableForm: unableForm
+  };
 })();
