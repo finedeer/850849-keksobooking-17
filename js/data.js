@@ -33,7 +33,7 @@
       pins = localPins;
       onGetPins(pins);
     },
-    window.createPin.errorHandler);
+    window.utilities.onError);
   }
 
   function getFilteredPins(conditions) {

@@ -30,7 +30,7 @@
   }
 
   function onFilterUpdate() {
-    window.createPin.appendPinsToDom(window.data.getFilteredPins(getConditions()));
+    window.utilities.debounce(window.createPin.appendPinsToDom(window.data.getFilteredPins(getConditions())));
   }
 
   window.filter = {

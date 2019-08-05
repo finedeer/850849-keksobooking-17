@@ -1,9 +1,6 @@
 'use strict';
 (function () {
   var mapPinMain = document.querySelector('.map__pin--main');
-  var mapFaded = document.querySelector('.map');
-  var adForm = document.querySelector('.ad-form');
-  var mapFilters = document.querySelector('.map__filters');
   var adFormAdress = document.querySelector('#address');
 
   function activatePoints() {
@@ -11,9 +8,7 @@
       window.createPin.appendPinsToDom(window.data.getFilteredPins());
       window.card.appendCardToDom(window.data.getFilteredPins()[0]);
     });
-    mapFaded.classList.remove('map--faded');
-    adForm.classList.remove('ad-form--disabled');
-    mapFilters.classList.remove('map__filters--disabled');
+    window.form.unableForm();
     activated = true;
   }
   var activated = false;

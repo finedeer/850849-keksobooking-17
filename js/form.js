@@ -20,6 +20,8 @@
     '2': ['1', '2'],
     '3': ['1', '2', '3']
   };
+  var mapFaded = document.querySelector('.map');
+  var mapFilters = document.querySelector('.map__filters');
 
   adFormTitle.addEventListener('invalid', function () {
     if (adFormTitle.validity.tooShort) {
@@ -64,74 +66,49 @@
   var synchronizeRoomNumAndCapacity = function (firstSelect, secondSelect) {
     firstSelect.addEventListener('change', function (e) {
       var optionsRooms = secondSelect.children;
-      console.log(optionsRooms)
       for (var i = 0; i < optionsRooms.length; i++) {
-        optionsRooms[i].disable = true;
+        optionsRooms[i].disabled = true;
       }
       var capacity = e.target.value;
       var rooms = roomMapByCapacity[capacity];
-      rooms.forEach(function () {
+      rooms.forEach(function (room) {
         for (var j = 0; j < optionsRooms.length; j++) {
-          if (optionsRooms[i].disable === rooms) {
-            optionsRooms[i].disable = false;
+          if (optionsRooms[j].value === room) {
+            optionsRooms[j].disabled = false;
           }
         }
       });
+      if (rooms.indexOf(secondSelect.value) === -1) {
+        secondSelect.value = rooms[0];
+      }
     });
   };
   synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
 
-
-  // Обработка события submit и сброс
-  var errorTemplate = document.querySelector('#error').content;
-  var successTemplate = document.querySelector('#success').content;
-  var mapFaded = document.querySelector('.map');
-  var mapFilters = document.querySelector('.map__filters');
-  var main = document.querySelector('main');
-  var successMessage = document.querySelector('.success');
-
-
-  var renderSuccessMessage = function () {
-    var messageNode = successTemplate.cloneNode(true);
-    return messageNode;
+  var disableForm = function () {
+    mapFaded.classList.add('map--faded');
+    adForm.classList.add('ad-form--disabled');
+    mapFilters.classList.add('map__filters--disabled');
+  };
+  var unableForm = function () {
+    mapFaded.classList.remove('map--faded');
+    adForm.classList.remove('ad-form--disabled');
+    mapFilters.classList.remove('map__filters--disabled');
   };
 
-  var appendMessageToDom = function (renderMessage) {
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(renderMessage);
-    main.appendChild(fragment);
-  };
-
-  function removeMessage(message) {
-    if (message) {
-      message.parentElement.removeChild(message);
-    }
+  function resetAll() {
+    adForm.reset();
+    disableForm();
+    window.card.removeCard();
+    window.createPin.deletePins();
+    window.pin.resetPin();
+    adFormPrice.placeholder = '1000';
+    window.utilities.appendMessageToDom(window.utilities.renderSuccessMessage());
+    synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
   }
 
-  var listenCloseSuccessMessage = function () {
-    main.addEventListener('click', function () {
-      removeMessage(successMessage);
-    });
-    main.addEventListener('keydown', function (e) {
-      if (window.utilities.isEscPressed(e)) {
-        removeMessage(successMessage);
-        window.pin.activatePoints();
-      }
-    });
-  };
-
-  /* var rendErerrorMessage = function (errorMessage) {
-    var messageNode = errorTemplate.cloneNode(true);
-    messageNode.textContent = errorMessage;
-    return messageNode;
-  };*/
-  var onError = function (errorMessage) {
-    var node = errorTemplate.cloneNode(true);
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement(main, node);
-  };
-
   adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
     var formFields = adForm.elements;
     for (var i = 0; i < adForm.length; i++) {
       formFields[i].style.boxShadow = '';
@@ -140,21 +117,10 @@
         return;
       }
     }
-    window.backend.postData(new FormData(adForm), function () {
-      adForm.reset();
-      mapFaded.classList.add('map--faded');
-      adForm.classList.add('ad-form--disabled');
-      mapFilters.classList.add('map__filters--disabled');
-      window.card.removeCard();
-      window.createPin.deletePins();
-      window.pin.resetPin();
-      adFormPrice.placeholder = '1000';
-      appendMessageToDom(renderSuccessMessage());
-      successMessage = document.querySelector('.success');
-      listenCloseSuccessMessage(successMessage);
-      window.backend.getData(onError); // что-то совсем не то
-    });
-    evt.preventDefault();
+    window.backend.postData(new FormData(adForm), resetAll, window.utilities.onError);
   });
 
+  window.form = {
+    unableForm: unableForm
+  };
 })();

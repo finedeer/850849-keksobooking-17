@@ -9,7 +9,7 @@
       if (xhr.status === 200) {
         onSuccess(xhr.response);
       } else {
-        onError(/* 'Статус ответа: ' + xhr.status + ' ' + xhr.statusText*/xhr.response);
+        onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
       }
     });
     xhr.addEventListener('error', function () {
@@ -36,7 +36,6 @@
   };
 
   window.backend = {
-    setup: setup,
     postData: postData,
     getData: getData
   };
