@@ -25,9 +25,10 @@
     width: pinRect.width,
     height: pinRect.height
   };
+
   var pinCords = {
     x: boundSize.width / 2,
-    y: boundSize.height / 2
+    y: (boundSize.height / 2)
   };
 
   var resetPin = function () {
@@ -65,7 +66,7 @@
   };
 
   var movePoint = function (newCoords) {
-    mainPinButton.style.top = newCoords.y - pinSize.height / 4 + 'px';
+    mainPinButton.style.top = newCoords.y - pinSize.height / 2 + 'px';
     mainPinButton.style.left = newCoords.x - pinSize.width / 2 + 'px';
     setAdress(newCoords);
   };
@@ -82,6 +83,10 @@
 
     if (!activated) {
       activatePoints();
+      pinCords = {
+        x: boundSize.width / 2,
+        y: (boundSize.height / 2) + (pinSize.height / 2)
+      };
     }
 
 
