@@ -28,15 +28,9 @@
     };
   };
 
-  var renderSuccessMessage = function () {
+  var onSuccess = function () {
     var messageNode = successTemplate.cloneNode(true);
-    return messageNode;
-  };
-
-  var appendMessageToDom = function (renderMessage) {
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(renderMessage);
-    main.appendChild(fragment);
+    main.append(messageNode);
     listenCloseSuccessMessage();
   };
 
@@ -50,7 +44,7 @@
     }
   };
 
-  function listenCloseSuccessMessage() {
+  var listenCloseSuccessMessage = function () {
     main.addEventListener('click', function () {
       removeMessage();
     });
@@ -59,7 +53,7 @@
         removeMessage();
       }
     });
-  }
+  };
 
   var onError = function () {
     var node = errorTemplate.cloneNode(true);
@@ -70,7 +64,7 @@
     listenCloseErrorMessage(errorCloseNode);
   };
 
-  function listenCloseErrorMessage(errorButton) {
+  var listenCloseErrorMessage = function (errorButton) {
     main.addEventListener('click', function () {
       removeMessage();
     });
@@ -87,15 +81,13 @@
         removeMessage();
       }
     });
-  }
-
+  };
 
   window.utilities = {
     isEnterPressed: isEnterPressed,
     isEscPressed: isEscPressed,
     debounce: debounce,
-    renderSuccessMessage: renderSuccessMessage,
-    appendMessageToDom: appendMessageToDom,
-    onError: onError
+    onError: onError,
+    onSuccess: onSuccess
   };
 })();

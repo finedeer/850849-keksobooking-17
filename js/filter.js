@@ -17,7 +17,7 @@
     filterNode.addEventListener('change', onFilterUpdate);
   });
 
-  function getConditions() {
+  var getConditions = function () {
     var conditions = {};
     filtersNodes.forEach(function (filterNode) {
       if (filterNode.type === 'checkbox') {
@@ -27,10 +27,10 @@
       }
     });
     return conditions;
-  }
+  };
 
   function onFilterUpdate() {
-    window.utilities.debounce(window.createPin.appendPinsToDom(window.data.getFilteredPins(getConditions())));
+    window.utilities.debounce(window.pins.appendToDom(window.data.getFilteredPins(getConditions())));
   }
 
   window.filter = {

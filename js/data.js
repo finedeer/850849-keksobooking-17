@@ -28,15 +28,15 @@
   };
 
   var pins = [];
-  function getPins(onGetPins) {
+  var getPins = function (onGetPins) {
     window.backend.getData(function (localPins) {
       pins = localPins;
       onGetPins(pins);
     },
     window.utilities.onError);
-  }
+  };
 
-  function getFilteredPins(conditions) {
+  var getFilteredPins = function (conditions) {
     if (!conditions) {
       return pins.slice(0, 5);
     }
@@ -78,10 +78,10 @@
       return true;
     });
 
-    window.card.removeCard();
+    window.card.remove();
     return newPins.slice(0, 5);
 
-  }
+  };
 
   window.data = {
     getPins: getPins,
