@@ -1,22 +1,22 @@
 'use strict';
 (function () {
-  var mapPinsNode = document.querySelector('.map__pins');
-  var template = document.querySelector('#pin').content;
-  var pinTemplate = template.querySelector('button');
+  var pinContainer = document.querySelector('.map__pins');
+  var pinTemplate = document.querySelector('#pin').content;
+  var pinButton = pinTemplate.querySelector('button');
 
   var renderPins = function (mark) {
-    var pinElement = pinTemplate.cloneNode(true);
+    var pinElement = pinButton.cloneNode(true);
     var picture = pinElement.querySelector('img');
     picture.src = mark.author.avatar;
     picture.alt = mark.offer.type;
     pinElement.style.left = mark.location.x + 'px';
     pinElement.style.top = mark.location.y + 'px';
     pinElement.addEventListener('click', function () {
-      window.card.appendCardToDom(mark);
+      window.card.appendToDom(mark);
     });
     pinElement.addEventListener('keydown', function (e) {
       if (window.utilities.isEscPressed(e)) {
-        window.card.appendCardToDom(mark);
+        window.card.appendToDom(mark);
       }
     });
     return pinElement;
@@ -26,22 +26,22 @@
     for (var i = 0; i < pins.length; i++) {
       fragment.appendChild(renderPins(pins[i]));
     }
-    var mapPins = mapPinsNode.querySelectorAll('.map__pin:not(.map__pin--main)');
+    var mapPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var j = 0; j < mapPins.length; j++) {
-      mapPinsNode.removeChild(mapPins[j]);
+      pinContainer.removeChild(mapPins[j]);
     }
-    mapPinsNode.appendChild(fragment);
+    pinContainer.appendChild(fragment);
   };
   var deletePins = function () {
-    var mapPins = mapPinsNode.querySelectorAll('.map__pin:not(.map__pin--main)');
+    var mapPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var j = 0; j < mapPins.length; j++) {
-      mapPinsNode.removeChild(mapPins[j]);
+      pinContainer.removeChild(mapPins[j]);
     }
   };
 
-  window.createPin = {
-    renderPins: renderPins,
-    appendPinsToDom: appendPinsToDom,
-    deletePins: deletePins
+  window.pins = {
+    render: renderPins,
+    appendToDom: appendPinsToDom,
+    delete: deletePins
   };
 })();

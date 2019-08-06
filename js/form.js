@@ -22,6 +22,7 @@
   };
   var mapFaded = document.querySelector('.map');
   var mapFilters = document.querySelector('.map__filters');
+  var resetButton = adForm.querySelector('.ad-form__reset');
 
   adFormTitle.addEventListener('invalid', function () {
     if (adFormTitle.validity.tooShort) {
@@ -96,16 +97,21 @@
     mapFilters.classList.remove('map__filters--disabled');
   };
 
-  function resetAll() {
+  var resetAll = function () {
     adForm.reset();
+    mapFilters.reset();
     disableForm();
-    window.card.removeCard();
-    window.createPin.deletePins();
-    window.pin.resetPin();
+    window.card.remove();
+    window.pins.delete();
+    window.pin.reset();
     adFormPrice.placeholder = '1000';
-    window.utilities.appendMessageToDom(window.utilities.renderSuccessMessage());
+    window.utilities.onSuccess();
     synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
-  }
+  };
+
+  resetButton.addEventListener('click', function () {
+    resetAll();
+  });
 
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
@@ -121,6 +127,6 @@
   });
 
   window.form = {
-    unableForm: unableForm
+    unable: unableForm
   };
 })();

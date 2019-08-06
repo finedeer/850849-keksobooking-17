@@ -1,86 +1,92 @@
 'use strict';
 (function () {
-  var mapPinMain = document.querySelector('.map__pin--main');
+  var mainPinButton = document.querySelector('.map__pin--main');
   var adFormAdress = document.querySelector('#address');
 
-  function activatePoints() {
+  var activatePoints = function () {
     window.data.getPins(function () {
-      window.createPin.appendPinsToDom(window.data.getFilteredPins());
-      window.card.appendCardToDom(window.data.getFilteredPins()[0]);
+      window.pins.appendToDom(window.data.getFilteredPins());
+      window.card.appendToDom(window.data.getFilteredPins()[0]);
     });
-    window.form.unableForm();
+    window.form.unable();
     activated = true;
-  }
+  };
   var activated = false;
 
-  var areaNode = document.querySelector('.map__overlay');
+  var areaNode = document.querySelector('.map');
   var areaRect = areaNode.getBoundingClientRect();
   var boundSize = {
     width: areaRect.width,
     height: areaRect.height
   };
 
-  var pinRect = mapPinMain.getBoundingClientRect();
+  var pinRect = mainPinButton.getBoundingClientRect();
   var pinSize = {
     width: pinRect.width,
-    height: pinRect.height + 19
-  };
-  var pinCords = {
-    x: boundSize.width / 2,
-    y: boundSize.height / 2
+    height: pinRect.height
   };
 
-  function resetPin() {
+  var pinCords = {
+    x: boundSize.width / 2,
+    y: (boundSize.height / 2)
+  };
+
+  var resetPin = function () {
     activated = false;
     pinCords = {
       x: boundSize.width / 2,
       y: boundSize.height / 2
     };
     setAdress(pinCords);
-  }
+    movePoint(pinCords);
+  };
 
-  function validateBound(coords, bound) {
+  var validateBound = function (coords, bound) {
     var newCoords = {
       x: coords.x,
       y: coords.y
     };
-    if (newCoords.x > bound.width) {
-      newCoords.x = bound.width;
+    if (newCoords.x > bound.width - pinSize.width / 2) {
+      newCoords.x = bound.width - pinSize.width / 2;
     }
 
     if (newCoords.x < pinSize.width / 2) {
       newCoords.x = pinSize.width / 2;
     }
 
-    if (newCoords.y > bound.height - 20) {
-      newCoords.y = bound.height - 20;
+    if (newCoords.y > bound.height - pinSize.height) {
+      newCoords.y = bound.height - pinSize.height;
     }
 
-    if (newCoords.y < 130) {
-      newCoords.y = 130;
+    if (newCoords.y < pinSize.height * 2) {
+      newCoords.y = pinSize.height * 2;
     }
 
     return newCoords;
-  }
+  };
 
-  function movePoint(newCoords) {
-    mapPinMain.style.top = newCoords.y - pinSize.height + 'px';
-    mapPinMain.style.left = newCoords.x - pinSize.width / 2 + 'px';
+  var movePoint = function (newCoords) {
+    mainPinButton.style.top = newCoords.y - pinSize.height / 2 + 'px';
+    mainPinButton.style.left = newCoords.x - pinSize.width / 2 + 'px';
     setAdress(newCoords);
-  }
+  };
 
-  function setAdress(coords) {
+  var setAdress = function (coords) {
     adFormAdress.value = coords.x + ', ' + coords.y;
-  }
+  };
 
   setAdress(pinCords);
 
-  mapPinMain.addEventListener('mousedown', function (evt) {
+  mainPinButton.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
 
     if (!activated) {
       activatePoints();
+      pinCords = {
+        x: boundSize.width / 2,
+        y: (boundSize.height / 2) + (pinSize.height / 2)
+      };
     }
 
 
@@ -130,6 +136,6 @@
     activatePoints: activatePoints,
     setAdress: setAdress,
     pinCords: pinCords,
-    resetPin: resetPin
+    reset: resetPin
   };
 })();
