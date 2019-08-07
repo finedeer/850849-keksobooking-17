@@ -4,7 +4,7 @@
   var adFormTitle = adForm.querySelector('#title');
   var adFormPrice = adForm.querySelector('#price');
   var adFormType = adForm.querySelector('#type');
-  var prices = {
+  var typeToPrices = {
     'bungalo': '0',
     'flat': '1000',
     'house': '5000',
@@ -14,13 +14,13 @@
   var adFormTimeout = adForm.querySelector('#timeout');
   var adFormRoomNumber = adForm.querySelector('#room_number');
   var adFormCapacity = adForm.querySelector('#capacity');
-  var roomMapByCapacity = {
+  var roomNumberToCapacity = {
     '100': ['0'],
     '1': ['1'],
     '2': ['1', '2'],
     '3': ['1', '2', '3']
   };
-  var mapFaded = document.querySelector('.map');
+  var map = document.querySelector('.map');
   var mapFilters = document.querySelector('.map__filters');
   var resetButton = adForm.querySelector('.ad-form__reset');
 
@@ -46,14 +46,14 @@
     }
   });
 
-  adFormPrice.placeholder = prices[adFormType.options[adFormType.selectedIndex].value];
+  adFormPrice.placeholder = typeToPrices[adFormType.options[adFormType.selectedIndex].value];
   var synchronizeTypeAndPrice = function (eventForm, formToCange, mapObject) {
     eventForm.addEventListener('change', function (e) {
       formToCange.placeholder = mapObject[e.target.value];
       formToCange.min = mapObject[e.target.value];
     });
   };
-  synchronizeTypeAndPrice(adFormType, adFormPrice, prices);
+  synchronizeTypeAndPrice(adFormType, adFormPrice, typeToPrices);
 
   var synchronizeTwoForms = function (firstForm, secondForm) {
     firstForm.addEventListener('change', function (e) {
@@ -71,14 +71,15 @@
         optionsRooms[i].disabled = true;
       }
       var capacity = e.target.value;
-      var rooms = roomMapByCapacity[capacity];
+      var rooms = roomNumberToCapacity[capacity];
       rooms.forEach(function (room) {
-        for (var j = 0; j < optionsRooms.length; j++) {
-          if (optionsRooms[j].value === room) {
-            optionsRooms[j].disabled = false;
+        for (i = 0; i < optionsRooms.length; i++) {
+          if (optionsRooms[i].value === room) {
+            optionsRooms[i].disabled = false;
           }
         }
       });
+    //  optionsRooms[j].disabled = optionsRooms[j].value === room;
       if (rooms.indexOf(secondSelect.value) === -1) {
         secondSelect.value = rooms[0];
       }
@@ -87,12 +88,12 @@
   synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
 
   var disableForm = function () {
-    mapFaded.classList.add('map--faded');
+    map.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
     mapFilters.classList.add('map__filters--disabled');
   };
   var unableForm = function () {
-    mapFaded.classList.remove('map--faded');
+    map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
     mapFilters.classList.remove('map__filters--disabled');
   };

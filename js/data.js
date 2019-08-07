@@ -1,7 +1,7 @@
 'use strict';
 (function () {
 
-  var filtersMap = {
+  var idToValue = {
     'housing-type': 'type',
     'housing-price': 'price',
     'housing-rooms': 'rooms',
@@ -56,22 +56,22 @@
       if (conditions['housing-price'] !== 'any' && synchronizePriceInDiapason(pin.offer.price) !== conditions['housing-price']) {
         return false;
       }
-      if (conditions['filter-wifi'] && pin.offer.features.indexOf(filtersMap['filter-wifi']) === -1) {
+      if (conditions['filter-wifi'] && pin.offer.features.indexOf(idToValue['filter-wifi']) === -1) {
         return false;
       }
-      if (conditions['filter-dishwasher'] && pin.offer.features.indexOf(filtersMap['filter-dishwasher']) === -1) {
+      if (conditions['filter-dishwasher'] && pin.offer.features.indexOf(idToValue['filter-dishwasher']) === -1) {
         return false;
       }
-      if (conditions['filter-parking'] && pin.offer.features.indexOf(filtersMap['filter-parking']) === -1) {
+      if (conditions['filter-parking'] && pin.offer.features.indexOf(idToValue['filter-parking']) === -1) {
         return false;
       }
-      if (conditions['filter-washer'] && pin.offer.features.indexOf(filtersMap['filter-washer']) === -1) {
+      if (conditions['filter-washer'] && pin.offer.features.indexOf(idToValue['filter-washer']) === -1) {
         return false;
       }
-      if (conditions['filter-elevator'] && pin.offer.features.indexOf(filtersMap['filter-elevator']) === -1) {
+      if (conditions['filter-elevator'] && pin.offer.features.indexOf(idToValue['filter-elevator']) === -1) {
         return false;
       }
-      if (conditions['filter-conditioner'] && pin.offer.features.indexOf(filtersMap['filter-conditioner']) === -1) {
+      if (conditions['filter-conditioner'] && pin.offer.features.indexOf(idToValue['filter-conditioner']) === -1) {
         return false;
       }
       return true;

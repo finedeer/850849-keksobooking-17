@@ -13,29 +13,32 @@
     pinElement.style.top = mark.location.y + 'px';
     pinElement.addEventListener('click', function () {
       window.card.appendToDom(mark);
+      pinElement.className = 'map__pin--active'; // вопрос
     });
     pinElement.addEventListener('keydown', function (e) {
       if (window.utilities.isEscPressed(e)) {
+        pinElement.className = 'map__pin--active';
         window.card.appendToDom(mark);
       }
     });
     return pinElement;
   };
+
   var appendPinsToDom = function (pins) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < pins.length; i++) {
       fragment.appendChild(renderPins(pins[i]));
     }
-    var mapPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var j = 0; j < mapPins.length; j++) {
-      pinContainer.removeChild(mapPins[j]);
+    var adsPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var j = 0; j < adsPins.length; j++) {
+      pinContainer.removeChild(adsPins[j]);
     }
     pinContainer.appendChild(fragment);
   };
   var deletePins = function () {
-    var mapPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var j = 0; j < mapPins.length; j++) {
-      pinContainer.removeChild(mapPins[j]);
+    var adsPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var j = 0; j < adsPins.length; j++) {
+      pinContainer.removeChild(adsPins[j]);
     }
   };
 

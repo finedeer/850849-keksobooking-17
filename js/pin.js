@@ -6,18 +6,18 @@
   var activatePoints = function () {
     window.data.getPins(function () {
       window.pins.appendToDom(window.data.getFilteredPins());
-      window.card.appendToDom(window.data.getFilteredPins()[0]);
+      //window.card.appendToDom(window.data.getFilteredPins()[0]);
     });
     window.form.unable();
     activated = true;
   };
   var activated = false;
 
-  var areaNode = document.querySelector('.map');
-  var areaRect = areaNode.getBoundingClientRect();
-  var boundSize = {
-    width: areaRect.width,
-    height: areaRect.height
+  var map = document.querySelector('.map');
+  var mapArea = map.getBoundingClientRect();
+  var mapAreaSize = {
+    width: mapArea.width,
+    height: mapArea.height
   };
 
   var pinRect = mainPinButton.getBoundingClientRect();
@@ -25,20 +25,24 @@
     width: pinRect.width,
     height: pinRect.height
   };
-
   var pinCords = {
+    x: pinRect.left + (pinSize.width / 2),
+    y: pinRect.top + (pinSize.height / 2)
+  };
+
+  /*  var pinCords = {
     x: boundSize.width / 2,
     y: (boundSize.height / 2)
-  };
+  };*/
 
   var resetPin = function () {
     activated = false;
     pinCords = {
-      x: boundSize.width / 2,
-      y: boundSize.height / 2
+      x: pinRect.right - (pinSize.width / 2),
+      y: pinRect.bottom
     };
-    setAdress(pinCords);
     movePoint(pinCords);
+    setAdress(pinCords);
   };
 
   var validateBound = function (coords, bound) {
@@ -72,7 +76,7 @@
   };
 
   var setAdress = function (coords) {
-    adFormAdress.value = coords.x + ', ' + coords.y;
+    adFormAdress.value = Math.round(coords.x) + ', ' + Math.round(coords.y);
   };
 
   setAdress(pinCords);
@@ -84,8 +88,8 @@
     if (!activated) {
       activatePoints();
       pinCords = {
-        x: boundSize.width / 2,
-        y: (boundSize.height / 2) + (pinSize.height / 2)
+        x: mapAreaSize.width / 2,
+        y: (mapAreaSize.height / 2) + (pinSize.height / 2)
       };
     }
 
@@ -95,7 +99,7 @@
       y: evt.clientY
     };
 
-    setAdress(validateBound(pinCords, boundSize));
+    setAdress(validateBound(pinCords, mapAreaSize));
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
@@ -115,7 +119,7 @@
         y: pinCords.y - shift.y,
       };
 
-      pinCords = validateBound(newCoords, boundSize);
+      pinCords = validateBound(newCoords, mapAreaSize);
 
       movePoint(pinCords);
       setAdress(newCoords);
