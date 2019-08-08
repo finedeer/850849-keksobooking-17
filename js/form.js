@@ -21,10 +21,10 @@
     '3': ['1', '2', '3']
   };
   var map = document.querySelector('.map');
-  var mapFilters = document.querySelector('.map__filters');
+  var mapFilter = document.querySelector('.map__filters');
   var resetButton = adForm.querySelector('.ad-form__reset');
 
-  adFormTitle.addEventListener('invalid', function () {
+  var setCustomValidityInTitle = function () {
     if (adFormTitle.validity.tooShort) {
       adFormTitle.setCustomValidity('Заголовок объявления должен состоять минимум из 30 символов');
     } else if (adFormTitle.validity.tooLong) {
@@ -34,9 +34,10 @@
     } else {
       adFormTitle.setCustomValidity('');
     }
-  });
+  };
+  adFormTitle.addEventListener('invalid', setCustomValidityInTitle);
 
-  adFormPrice.addEventListener('invalid', function () {
+  var setCustomValidityInPrice = function () {
     if (adFormPrice.validity.rangeOverflow) {
       adFormPrice.setCustomValidity('Максимальное значение — 1 000 000');
     } else if (adFormPrice.validity.valueMissing) {
@@ -44,13 +45,15 @@
     } else {
       adFormPrice.setCustomValidity('');
     }
-  });
+  };
+
+  adFormPrice.addEventListener('invalid', setCustomValidityInPrice);
 
   adFormPrice.placeholder = typeToPrices[adFormType.options[adFormType.selectedIndex].value];
-  var synchronizeTypeAndPrice = function (eventForm, formToCange, mapObject) {
-    eventForm.addEventListener('change', function (e) {
-      formToCange.placeholder = mapObject[e.target.value];
-      formToCange.min = mapObject[e.target.value];
+  var synchronizeTypeAndPrice = function (firstForm, secondForm, dictionary) {
+    firstForm.addEventListener('change', function (e) {
+      secondForm.placeholder = dictionary[e.target.value];
+      secondForm.min = dictionary[e.target.value];
     });
   };
   synchronizeTypeAndPrice(adFormType, adFormPrice, typeToPrices);
@@ -67,19 +70,16 @@
   var synchronizeRoomNumAndCapacity = function (firstSelect, secondSelect) {
     firstSelect.addEventListener('change', function (e) {
       var optionsRooms = secondSelect.children;
-      for (var i = 0; i < optionsRooms.length; i++) {
-        optionsRooms[i].disabled = true;
+      var capacityValueToCapacityOption = {};
+      for (var j = 0; j < optionsRooms.length; j++) {
+        capacityValueToCapacityOption[optionsRooms[j].value] = optionsRooms[j];
+        optionsRooms[j].disabled = true;
       }
       var capacity = e.target.value;
       var rooms = roomNumberToCapacity[capacity];
       rooms.forEach(function (room) {
-        for (i = 0; i < optionsRooms.length; i++) {
-          if (optionsRooms[i].value === room) {
-            optionsRooms[i].disabled = false;
-          }
-        }
+        capacityValueToCapacityOption[room].disabled = false;
       });
-    //  optionsRooms[j].disabled = optionsRooms[j].value === room;
       if (rooms.indexOf(secondSelect.value) === -1) {
         secondSelect.value = rooms[0];
       }
@@ -90,17 +90,17 @@
   var disableForm = function () {
     map.classList.add('map--faded');
     adForm.classList.add('ad-form--disabled');
-    mapFilters.classList.add('map__filters--disabled');
+    mapFilter.classList.add('map__filters--disabled');
   };
-  var unableForm = function () {
+  var enableForm = function () {
     map.classList.remove('map--faded');
     adForm.classList.remove('ad-form--disabled');
-    mapFilters.classList.remove('map__filters--disabled');
+    mapFilter.classList.remove('map__filters--disabled');
   };
 
   var resetAll = function () {
     adForm.reset();
-    mapFilters.reset();
+    mapFilter.reset();
     disableForm();
     window.card.remove();
     window.pins.delete();
@@ -110,7 +110,9 @@
     synchronizeRoomNumAndCapacity(adFormRoomNumber, adFormCapacity);
   };
 
-  resetButton.addEventListener('click', function () {
+  resetButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    adForm.reset();
     resetAll();
   });
 
@@ -128,6 +130,6 @@
   });
 
   window.form = {
-    unable: unableForm
+    enable: enableForm
   };
 })();

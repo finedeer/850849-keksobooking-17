@@ -1,10 +1,10 @@
 'use strict';
 (function () {
-  var mapFilters = document.querySelector('.map__filters');
+  var mapFilter = document.querySelector('.map__filters');
 
   var filtersNodes = [];
-  var selectsNodes = mapFilters.querySelectorAll('select');
-  var inputsNodes = mapFilters.querySelectorAll('input');
+  var selectsNodes = mapFilter.querySelectorAll('select');
+  var inputsNodes = mapFilter.querySelectorAll('input');
   for (var i = 0; i < selectsNodes.length; i++) {
     filtersNodes.push(selectsNodes[i]);
   }
@@ -12,8 +12,10 @@
     filtersNodes.push(inputsNodes[j]);
   }
 
+  var debounceOnUpdateFilter = window.utilities.debounce(updateFilter);
+
   filtersNodes.forEach(function (filterNode) {
-    filterNode.addEventListener('change', onFilterUpdate);
+    filterNode.addEventListener('change', debounceOnUpdateFilter);
   });
 
   var getConditions = function () {
@@ -28,8 +30,8 @@
     return conditions;
   };
 
-  function onFilterUpdate() {
-    window.utilities.debounce(window.pins.appendToDom(window.data.getFilteredPins(getConditions())));
+  function updateFilter() {
+    window.pins.appendToDom(window.data.getFilteredPins(getConditions()));
   }
 
   window.filter = {

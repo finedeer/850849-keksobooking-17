@@ -2,22 +2,20 @@
 (function () {
   var mainPinButton = document.querySelector('.map__pin--main');
   var adFormAdress = document.querySelector('#address');
-
-  var activatePoints = function () {
-    window.data.getPins(function () {
-      window.pins.appendToDom(window.data.getFilteredPins());
-      //window.card.appendToDom(window.data.getFilteredPins()[0]);
-    });
-    window.form.unable();
-    activated = true;
+  var MovementArea = {
+    top: 130,
+    bottom: 630
   };
-  var activated = false;
 
-  var map = document.querySelector('.map');
-  var mapArea = map.getBoundingClientRect();
-  var mapAreaSize = {
-    width: mapArea.width,
-    height: mapArea.height
+  var map = document.querySelector('.map__overlay');
+  var mapRect = map.getBoundingClientRect();
+  var mapSize = {
+    width: mapRect.width,
+    height: mapRect.height
+  };
+  var mapCords = {
+    x: mapRect.left,
+    y: mapRect.top
   };
 
   var pinRect = mainPinButton.getBoundingClientRect();
@@ -26,20 +24,35 @@
     height: pinRect.height
   };
   var pinCords = {
-    x: pinRect.left + (pinSize.width / 2),
-    y: pinRect.top + (pinSize.height / 2)
+    x: pinRect.left + (pinSize.width / 2) - mapCords.x,
+    y: pinRect.top + (pinSize.height / 2) - mapCords.y
   };
 
-  /*  var pinCords = {
-    x: boundSize.width / 2,
-    y: (boundSize.height / 2)
-  };*/
+  var setAdress = function (coords) {
+    adFormAdress.value = Math.round(coords.x) + ', ' + Math.round(coords.y);
+  };
+
+  setAdress(pinCords);
+
+  var activatePage = function () {
+    window.data.getPins(function () {
+      window.pins.appendToDom(window.data.getFilteredPins());
+    });
+    window.form.enable();
+    activated = true;
+    pinCords = {
+      x: pinRect.left + (pinSize.width / 2) - mapCords.x,
+      y: pinRect.top + pinSize.height + window.constants.NEEDLE_SIZE - mapCords.y
+    };
+    setAdress(pinCords);
+  };
+  var activated = false;
 
   var resetPin = function () {
     activated = false;
     pinCords = {
-      x: pinRect.right - (pinSize.width / 2),
-      y: pinRect.bottom
+      x: pinRect.left + (pinSize.width / 2) - mapCords.x,
+      y: pinRect.top + (pinSize.height / 2) - mapCords.y
     };
     movePoint(pinCords);
     setAdress(pinCords);
@@ -58,48 +71,36 @@
       newCoords.x = pinSize.width / 2;
     }
 
-    if (newCoords.y > bound.height - pinSize.height) {
-      newCoords.y = bound.height - pinSize.height;
+    if (newCoords.y > MovementArea.bottom + pinSize.height - window.constants.NEEDLE_SIZE / 2) {
+      newCoords.y = MovementArea.bottom + pinSize.height - window.constants.NEEDLE_SIZE / 2;
     }
 
-    if (newCoords.y < pinSize.height * 2) {
-      newCoords.y = pinSize.height * 2;
+    if (newCoords.y < MovementArea.top) {
+      newCoords.y = MovementArea.top;
     }
 
     return newCoords;
   };
 
   var movePoint = function (newCoords) {
-    mainPinButton.style.top = newCoords.y - pinSize.height / 2 + 'px';
+    mainPinButton.style.top = newCoords.y - pinSize.height + 'px';
     mainPinButton.style.left = newCoords.x - pinSize.width / 2 + 'px';
     setAdress(newCoords);
   };
 
-  var setAdress = function (coords) {
-    adFormAdress.value = Math.round(coords.x) + ', ' + Math.round(coords.y);
-  };
-
-  setAdress(pinCords);
-
   mainPinButton.addEventListener('mousedown', function (evt) {
     evt.preventDefault();
 
-
     if (!activated) {
-      activatePoints();
-      pinCords = {
-        x: mapAreaSize.width / 2,
-        y: (mapAreaSize.height / 2) + (pinSize.height / 2)
-      };
+      activatePage();
     }
-
 
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
 
-    setAdress(validateBound(pinCords, mapAreaSize));
+    setAdress(validateBound(pinCords, mapSize));
 
     var onMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
@@ -119,7 +120,7 @@
         y: pinCords.y - shift.y,
       };
 
-      pinCords = validateBound(newCoords, mapAreaSize);
+      pinCords = validateBound(newCoords, mapSize);
 
       movePoint(pinCords);
       setAdress(newCoords);
@@ -135,9 +136,16 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   });
+  mainPinButton.addEventListener('keydown', function (e) {
+    if (window.utilities.isEnterPressed(e)) {
+      if (!activated) {
+        activatePage();
+      }
+    }
+  });
 
   window.pin = {
-    activatePoints: activatePoints,
+    activatePoints: activatePage,
     setAdress: setAdress,
     pinCords: pinCords,
     reset: resetPin

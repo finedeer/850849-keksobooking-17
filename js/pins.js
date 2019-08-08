@@ -4,21 +4,25 @@
   var pinTemplate = document.querySelector('#pin').content;
   var pinButton = pinTemplate.querySelector('button');
 
-  var renderPins = function (mark) {
+  var renderPin = function (mark) {
     var pinElement = pinButton.cloneNode(true);
     var picture = pinElement.querySelector('img');
     picture.src = mark.author.avatar;
     picture.alt = mark.offer.type;
     pinElement.style.left = mark.location.x + 'px';
     pinElement.style.top = mark.location.y + 'px';
-    pinElement.addEventListener('click', function () {
+    var showCard = function () {
       window.card.appendToDom(mark);
-      pinElement.className = 'map__pin--active'; // вопрос
-    });
+      var activePin = document.querySelector('.map__pin--active');
+      if (activePin) {
+        activePin.classList.remove('map__pin--active');
+      }
+      pinElement.classList.add('map__pin--active');
+    };
+    pinElement.addEventListener('click', showCard);
     pinElement.addEventListener('keydown', function (e) {
       if (window.utilities.isEscPressed(e)) {
-        pinElement.className = 'map__pin--active';
-        window.card.appendToDom(mark);
+        window.card.remove();
       }
     });
     return pinElement;
@@ -27,7 +31,7 @@
   var appendPinsToDom = function (pins) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < pins.length; i++) {
-      fragment.appendChild(renderPins(pins[i]));
+      fragment.appendChild(renderPin(pins[i]));
     }
     var adsPins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var j = 0; j < adsPins.length; j++) {
@@ -43,7 +47,7 @@
   };
 
   window.pins = {
-    render: renderPins,
+    render: renderPin,
     appendToDom: appendPinsToDom,
     delete: deletePins
   };

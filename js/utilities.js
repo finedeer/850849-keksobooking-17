@@ -4,7 +4,6 @@
   var ENTER_KEYCODE = 13;
   var errorTemplate = document.querySelector('#error').content;
   var successTemplate = document.querySelector('#success').content;
-  var error = document.querySelector('.error');
   var main = document.querySelector('main');
 
   var isEnterPressed = function (e) {
@@ -31,7 +30,7 @@
   var showSuccess = function () {
     var messageNode = successTemplate.cloneNode(true);
     main.append(messageNode);
-    listenCloseSuccessMessage();
+    сloseSuccessMessage();
   };
 
   var removeMessage = function () {
@@ -44,10 +43,8 @@
     }
   };
 
-  var listenCloseSuccessMessage = function () {
-    main.addEventListener('click', function () {
-      removeMessage();
-    });
+  var сloseSuccessMessage = function () {
+    main.addEventListener('click', removeMessage);
     main.addEventListener('keydown', function (e) {
       if (window.utilities.isEscPressed(e)) {
         removeMessage();
@@ -57,20 +54,14 @@
 
   var showError = function () {
     var node = errorTemplate.cloneNode(true);
-    var messageNode = node.querySelector('.error__message');
-    messageNode.textContent = error;
     main.append(node);
     var errorCloseNode = document.querySelector('.error .error__button');
-    listenCloseErrorMessage(errorCloseNode);
+    сloseErrorMessage(errorCloseNode);
   };
 
-  var listenCloseErrorMessage = function (errorButton) {
-    main.addEventListener('click', function () {
-      removeMessage();
-    });
-    errorButton.addEventListener('click', function () {
-      removeMessage();
-    });
+  var сloseErrorMessage = function (errorButton) {
+    main.addEventListener('click', removeMessage);
+    errorButton.addEventListener('click', removeMessage);
     main.addEventListener('keydown', function (e) {
       if (window.utilities.isEscPressed(e)) {
         removeMessage();

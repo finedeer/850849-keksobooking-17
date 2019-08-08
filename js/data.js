@@ -43,7 +43,6 @@
     var newPins = pins.slice(0);
 
     newPins = newPins.filter(function (pin) {
-
       if (conditions['housing-rooms'] !== 'any' && pin.offer.rooms !== +conditions['housing-rooms']) {
         return false;
       }
