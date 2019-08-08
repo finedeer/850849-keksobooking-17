@@ -102,7 +102,7 @@
 
     setAdress(validateBound(pinCords, mapSize));
 
-    var onMouseMove = function (moveEvt) {
+    var performOnMouseMove = function (moveEvt) {
       moveEvt.preventDefault();
 
       var shift = {
@@ -126,15 +126,15 @@
       setAdress(newCoords);
     };
 
-    var onMouseUp = function (upEvt) {
+    var performOnMouseUp = function (upEvt) {
       upEvt.preventDefault();
 
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mousemove', performOnMouseMove);
+      document.removeEventListener('mouseup', performOnMouseUp);
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mousemove', performOnMouseMove);
+    document.addEventListener('mouseup', performOnMouseUp);
   });
   mainPinButton.addEventListener('keydown', function (e) {
     if (window.utilities.isEnterPressed(e)) {
